@@ -6,6 +6,50 @@ Esta **primera versión (MVP)** se centra en un caso de uso concreto: **reproduc
 
 > ⚠️ **Estado del proyecto**: prototipo/MVP en evolución.
 
+## 🚀 Core API v0.2
+
+La v0.2 comienza como un **monolito modular** con NestJS 12 y TypeScript 6. El
+objetivo es mantener el núcleo sencillo y permitir que cada capacidad crezca como
+un módulo (`tasks`, `voice`, `home`, etc.) antes de considerar servicios separados.
+
+### Requisitos
+
+- Node.js 24 o posterior
+- pnpm 12
+
+### Desarrollo
+
+```bash
+pnpm install
+pnpm dev
+```
+
+La API queda disponible en `http://localhost:3000/api/v1` y el endpoint inicial
+de estado es `GET /api/v1/health`.
+
+Comandos principales:
+
+```bash
+pnpm build         # compila para producción
+pnpm typecheck     # comprueba los tipos
+pnpm lint          # analiza el código
+pnpm test          # ejecuta los tests
+pnpm check         # ejecuta todas las comprobaciones
+```
+
+Estructura inicial:
+
+```text
+src/
+├── main.ts
+├── app.module.ts
+└── modules/
+    └── health/
+```
+
+TypeScript 7 se evaluará cuando Nest CLI y el tooling basado en la API de
+TypeScript tengan soporte completo.
+
 ---
 
 ## 🧩 Qué incluye esta primera versión (MVP)

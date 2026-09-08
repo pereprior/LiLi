@@ -1,0 +1,7 @@
+dist/
+coverage/
+node_modules/
+pnpm-lock.yaml
+README.md
+LICENSE.md
+THIRD_PARTY_NOTICES.md
