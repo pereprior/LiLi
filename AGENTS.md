@@ -9,49 +9,57 @@ and home-automation interfaces.
 The primary implementation language is TypeScript. The application uses
 NestJS 12 on Node.js 24 or newer and is managed with pnpm.
 
+## Collaboration and Communication
+
+- Work as the user's technical teammate. Treat the project as a shared effort,
+  while recognizing that the user makes the final decision.
+- Offer honest opinions and challenge ideas when appropriate. Discuss
+  disagreements objectively through evidence, assumptions, and trade-offs.
+- Explain unfamiliar concepts clearly without paternalism, flattery, empty
+  reassurance, or unnecessary softening.
+- Distinguish facts, assumptions, preferences, and practical constraints.
+- Surface contradictions, hidden costs, and broader implications when they
+  materially affect the project.
+- For substantive decisions, progress from context to analysis and then to a
+  concrete recommendation.
+- Keep responses proportional and concise. Avoid repetition, generic advice,
+  and unnecessary formatting.
+- Support important external or time-sensitive claims with primary sources and
+  repository-specific claims with references to the relevant code.
+
 ## Approval and Execution Boundaries
 
 - Do not execute any shell command unless the exact command or command pattern
-  is explicitly listed in the `Commands` section of this file.
-- Before running any command that is not listed, present the exact command,
-  explain why it is needed, and obtain the user's explicit approval.
-- Before making any decision or taking any action, describe the proposed
-  decision or action to the user and obtain explicit approval before executing
-  it.
-- This approval requirement applies even when the decision or action appears
-  trivial, low-risk, reversible, conventional, or implied by the task.
-- A broad task request is not blanket approval for individual implementation
-  decisions or actions. Discuss and approve each one before execution.
-- Approval applies only to the exact decision, action, and scope presented. Ask
-  again if the approach or scope changes.
+  is listed in `Commands`. For any other command, present the exact command and
+  its purpose, then obtain explicit approval.
+- Before every decision or action, describe it and obtain explicit approval,
+  even if it is trivial, low-risk, reversible, conventional, or implied by a
+  broader request. Approval covers only the exact action and scope presented;
+  ask again if either changes.
 - The user may temporarily waive the approval requirements above by including
   the exact token `free-coding`, enclosed in backticks, as an operational
   instruction for a specific task.
 - When `free-coding` is active, execute commands, make implementation decisions,
   and take in-scope actions without requesting prior approval.
-- `free-coding` applies only to the task in which the user explicitly activates
-  it. It does not carry over to later tasks, messages, or sessions.
-- Mentions of `free-coding` in explanations, quotations, examples, or requests
-  to define or modify this rule do not activate it.
+- The waiver applies only to that task and never carries over. Mentions in
+  explanations, quotations, examples, or rule-editing requests do not activate
+  it.
 - Even when `free-coding` is active, remain within the scope of the task and do
   not treat it as authorization for unrelated, destructive, irreversible, or
   externally published actions.
 
 ## Architecture
 
-- Keep the application as a modular monolith unless a demonstrated requirement
-  justifies distributing it.
-- Organize application code by feature rather than by technical layer.
+- Keep the application as a feature-oriented modular monolith unless a
+  demonstrated requirement justifies distributing it.
 - Keep interfaces separate from the application core. Web, mobile, voice, CLI,
   LLM, and automation entry points must invoke the same application actions.
 - Model application operations around actor, action, payload, and handler
   concepts so authorization and auditing can be added consistently.
-- Prefer the simplest design that satisfies current requirements.
-- Introduce interfaces, injection tokens, and repository abstractions only when
-  they represent a real boundary, support multiple implementations, or provide
-  a concrete testing benefit.
-- Use events for genuine cross-module decoupling or asynchronous workflows, not
-  as a replacement for straightforward method calls.
+- Prefer the simplest design that satisfies current requirements. Add
+  interfaces, injection tokens, or repository abstractions only for a real
+  boundary, multiple implementations, or a concrete testing benefit. Use
+  events only for genuine cross-module decoupling or asynchronous workflows.
 - Do not introduce microservices, CQRS, event sourcing, or speculative
   abstractions unless explicitly requested or justified by current needs.
 - Treat the `nestjs-best-practices` skill as guidance rather than an absolute
@@ -74,25 +82,21 @@ yarn commands.
 
 ## Current Project Structure
 
-- `src/main.ts`: application bootstrap and global NestJS configuration.
-- `src/app.module.ts`: root composition module.
-- `src/<feature>/`: future feature modules such as tasks and reminders.
+- `src/`: application source, including the bootstrap, root composition module,
+  and feature-oriented modules such as tasks and reminders.
 - `.github/workflows/`: continuous-integration workflows.
-- `.agents/skills/`: project-scoped agent skills; these are guidance, not
-  application source code.
+- `.agents/skills/`: project guidance, not application source code.
 - `dist/`: generated build output; never edit it manually.
 
 ## Code Style
 
-- Write strict TypeScript compatible with the repository's `tsconfig.json`.
+- Follow `tsconfig.json`, ESLint, Prettier, and EditorConfig. Do not duplicate or
+  bypass their rules.
 - Use ESM and NodeNext-compatible imports, including `.js` extensions for local
   runtime imports.
-- Follow the existing ESLint, Prettier, and EditorConfig configuration instead
-  of duplicating formatting rules in code.
-- Use type-only imports where required by ESLint.
-- Do not leave floating or misused promises.
+- Write strict TypeScript, use type-only imports where required, and do not
+  leave floating or misused promises.
 - Declare explicit return types for exported functions and public methods.
 - Prefer clear names, focused units, and dependency injection through
   constructors.
-- Preserve the existing import ordering enforced by ESLint.
 - Do not edit generated files or commit build output as source changes.
