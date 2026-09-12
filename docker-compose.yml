@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: lili-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: lili
+      POSTGRES_USER: lili
+      POSTGRES_PASSWORD: lili
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
