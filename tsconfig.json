@@ -18,7 +18,14 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "inlineSources": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@prisma/*": ["./prisma/*"],
+      "@prisma/models/*": ["./prisma/models/*"],
+      "@/*": ["./src/*"],
+      "@auth/*": ["./src/auth/*"],
+      "@auth/users/*": ["./src/auth/users/*"]
+    }
   },
   "include": ["src/**/*.ts"]
 }
