@@ -16,6 +16,9 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
       - run: pnpm run build
 
   test:
@@ -27,4 +30,7 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate
+        env:
+          DATABASE_URL: postgresql://lili:lili@localhost:5432/lili?schema=public
       - run: pnpm run test
