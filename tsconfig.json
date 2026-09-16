@@ -3,7 +3,7 @@
     "target": "ES2024",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "types": ["node"],
     "strict": true,
@@ -24,7 +24,8 @@
       "@prisma/models/*": ["./prisma/models/*"],
       "@/*": ["./src/*"],
       "@auth/*": ["./src/auth/*"],
-      "@auth/users/*": ["./src/auth/users/*"]
+      "@auth/users/*": ["./src/auth/users/*"],
+      "@test-factories/*": ["./test-factories/*"]
     }
   },
   "include": ["src/**/*.ts"]

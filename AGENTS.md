@@ -100,3 +100,20 @@ yarn commands.
 - Prefer clear names, focused units, and dependency injection through
   constructors.
 - Do not edit generated files or commit build output as source changes.
+
+## Testing Philosophy
+
+- Treat tests as regression safeguards for future changes and maintenance, not
+  as coverage for its own sake. A test should alert us when a change breaks an
+  established behavior.
+- Prefer small, focused tests: each test should verify one concrete behavior.
+  Favor many specific tests over a few broad tests with multiple assertions and
+  responsibilities.
+- Test only the behavior owned by the subject under test. Mock collaborators
+  and verify their contract-level interaction when it affects that behavior;
+  test each collaborator's own implementation in its dedicated test suite.
+- Add more complex tests when they provide meaningful confidence in a complete
+  workflow.
+- Maintain two test levels:
+  - Unit tests verify the logic of services and utility classes in isolation.
+  - End-to-end tests verify that complete application flows work correctly.
