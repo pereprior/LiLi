@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@/auth/users/entities/user.entity.js';
 import { UserMapper } from '@/auth/users/mappers/user.mapper.js';
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
+import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
 import { PrismaService } from '@/database/prisma.service.js';
 
 @Injectable()
@@ -11,19 +12,10 @@ export class PrismaUserRepository extends UserRepository {
     super();
   }
 
-  override async create(user: UserEntity): Promise<UserEntity> {
+  override async create(data: CreateUserData): Promise<UserEntity> {
     const record = await this.prisma.user.create({
-      data: UserMapper.toCreateInput(user),
+      data,
     });
-
     return UserMapper.toEntity(record);
-  }
-
-  override async findByUsername(username: string): Promise<UserEntity | null> {
-    const record = await this.prisma.user.findUnique({
-      where: { username },
-    });
-
-    return record === null ? null : UserMapper.toEntity(record);
   }
 }

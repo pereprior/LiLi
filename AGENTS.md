@@ -29,24 +29,21 @@ NestJS 12 on Node.js 24 or newer and is managed with pnpm.
 
 ## Approval and Execution Boundaries
 
-- Do not execute any shell command unless the exact command or command pattern
-  is listed in `Commands`. For any other command, present the exact command and
-  its purpose, then obtain explicit approval.
-- Before every decision or action, describe it and obtain explicit approval,
-  even if it is trivial, low-risk, reversible, conventional, or implied by a
-  broader request. Approval covers only the exact action and scope presented;
-  ask again if either changes.
-- The user may temporarily waive the approval requirements above by including
-  the exact token `free-coding`, enclosed in backticks, as an operational
-  instruction for a specific task.
-- When `free-coding` is active, execute commands, make implementation decisions,
-  and take in-scope actions without requesting prior approval.
-- The waiver applies only to that task and never carries over. Mentions in
-  explanations, quotations, examples, or rule-editing requests do not activate
-  it.
-- Even when `free-coding` is active, remain within the scope of the task and do
-  not treat it as authorization for unrelated, destructive, irreversible, or
-  externally published actions.
+- When the user gives a concrete task, carry out the ordinary, in-scope steps
+  needed to complete it without repeatedly asking for confirmation. This
+  includes inspecting relevant files, editing the requested area, and running
+  the relevant verification commands listed in `Commands`.
+- Ask for approval before actions that materially expand the agreed scope,
+  are destructive or difficult to reverse, publish or communicate externally,
+  access external accounts or services, install or update dependencies, or
+  otherwise have a meaningful effect beyond the local task.
+- If the request is ambiguous enough that a reasonable implementation choice
+  would materially change the result, explain the alternatives and ask before
+  proceeding. Make reasonable low-impact assumptions when they keep work within
+  the stated task.
+- Do not make unrelated changes or take initiative outside the user's current
+  request. Report any relevant issue you discover and let the user decide
+  whether to address it.
 
 ## Architecture
 

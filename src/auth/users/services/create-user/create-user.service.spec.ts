@@ -9,13 +9,13 @@ import { UsernameAlreadyExistsException } from '@/auth/users/exceptions/username
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
 import { CreateUserService } from '@/auth/users/services/create-user/create-user.service.js';
 import { PasswordHasher } from '@/auth/users/services/password-hasher/password-hasher.js';
+import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
 
 describe('CreateUserService', () => {
   let module: TestingModule;
   let userRepository: {
-    create: ReturnType<typeof vi.fn<(user: UserEntity) => Promise<UserEntity>>>;
-    findByUsername: ReturnType<
-      typeof vi.fn<(username: string) => Promise<UserEntity | null>>
+    create: ReturnType<
+      typeof vi.fn<(data: CreateUserData) => Promise<UserEntity>>
     >;
   };
   let passwordHasher: {
@@ -30,8 +30,7 @@ describe('CreateUserService', () => {
 
   beforeEach(async () => {
     userRepository = {
-      create: vi.fn<(user: UserEntity) => Promise<UserEntity>>(),
-      findByUsername: vi.fn<(username: string) => Promise<UserEntity | null>>(),
+      create: vi.fn<(data: CreateUserData) => Promise<UserEntity>>(),
     } satisfies UserRepository;
     passwordHasher = {
       hash: vi.fn<(password: string) => Promise<string>>(),
@@ -58,42 +57,7 @@ describe('CreateUserService', () => {
     await module.close();
   });
 
-  it('looks up the requested username', async () => {
-    userRepository.findByUsername.mockResolvedValue(null);
-    passwordHasher.hash.mockResolvedValue('hashed-password');
-    userRepository.create.mockResolvedValue(userEntityFactory.build());
-
-    await service.execute(dto);
-
-    expect(userRepository.findByUsername).toHaveBeenCalledWith(dto.username);
-  });
-
-  it('rejects an existing username', async () => {
-    userRepository.findByUsername.mockResolvedValue(userEntityFactory.build());
-
-    await expect(service.execute(dto)).rejects.toBeInstanceOf(
-      UsernameAlreadyExistsException,
-    );
-  });
-
-  it('does not hash the password for an existing username', async () => {
-    userRepository.findByUsername.mockResolvedValue(userEntityFactory.build());
-
-    await service.execute(dto).catch(() => undefined);
-
-    expect(passwordHasher.hash).not.toHaveBeenCalled();
-  });
-
-  it('does not persist an existing username', async () => {
-    userRepository.findByUsername.mockResolvedValue(userEntityFactory.build());
-
-    await service.execute(dto).catch(() => undefined);
-
-    expect(userRepository.create).not.toHaveBeenCalled();
-  });
-
   it('delegates the provided password to the password hasher', async () => {
-    userRepository.findByUsername.mockResolvedValue(null);
     passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockResolvedValue(userEntityFactory.build());
 
@@ -103,23 +67,19 @@ describe('CreateUserService', () => {
   });
 
   it('persists the password hasher output with the username', async () => {
-    userRepository.findByUsername.mockResolvedValue(null);
     passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockResolvedValue(userEntityFactory.build());
 
     await service.execute(dto);
 
-    expect(userRepository.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        username: dto.username,
-        passwordHash: 'hashed-password',
-      }),
-    );
+    expect(userRepository.create).toHaveBeenCalledWith({
+      username: dto.username,
+      passwordHash: 'hashed-password',
+    });
   });
 
   it('returns the persisted user', async () => {
     const createdUser = userEntityFactory.build();
-    userRepository.findByUsername.mockResolvedValue(null);
     passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockResolvedValue(createdUser);
 
@@ -127,7 +87,6 @@ describe('CreateUserService', () => {
   });
 
   it('translates unique-constraint errors into duplicate username errors', async () => {
-    userRepository.findByUsername.mockResolvedValue(null);
     passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockRejectedValue(
       new Prisma.PrismaClientKnownRequestError('Unique constraint failed.', {
@@ -142,9 +101,8 @@ describe('CreateUserService', () => {
   });
 
   it('wraps unexpected errors as user errors', async () => {
-    userRepository.findByUsername.mockRejectedValue(
-      new Error('Database error'),
-    );
+    passwordHasher.hash.mockResolvedValue('hashed-password');
+    userRepository.create.mockRejectedValue(new Error('Database error'));
 
     await expect(service.execute(dto)).rejects.toBeInstanceOf(UserException);
   });
