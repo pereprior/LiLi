@@ -8,8 +8,8 @@ import { UserException } from '@/auth/users/exceptions/user.exception.js';
 import { UsernameAlreadyExistsException } from '@/auth/users/exceptions/username-already-exists.exception.js';
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
 import { CreateUserService } from '@/auth/users/services/create-user/create-user.service.js';
-import { PasswordHasher } from '@/auth/users/services/password-hasher/password-hasher.js';
 import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
+import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
 
 describe('CreateUserService', () => {
   let module: TestingModule;
@@ -17,9 +17,6 @@ describe('CreateUserService', () => {
     create: ReturnType<
       typeof vi.fn<(data: CreateUserData) => Promise<UserEntity>>
     >;
-  };
-  let passwordHasher: {
-    hash: ReturnType<typeof vi.fn<(password: string) => Promise<string>>>;
   };
   let service: CreateUserService;
 
@@ -32,9 +29,7 @@ describe('CreateUserService', () => {
     userRepository = {
       create: vi.fn<(data: CreateUserData) => Promise<UserEntity>>(),
     } satisfies UserRepository;
-    passwordHasher = {
-      hash: vi.fn<(password: string) => Promise<string>>(),
-    } satisfies PasswordHasher;
+    vi.spyOn(PasswordHasherUtils, 'hash').mockResolvedValue('hashed-password');
 
     module = await Test.createTestingModule({
       providers: [
@@ -42,10 +37,6 @@ describe('CreateUserService', () => {
         {
           provide: UserRepository,
           useValue: userRepository,
-        },
-        {
-          provide: PasswordHasher,
-          useValue: passwordHasher,
         },
       ],
     }).compile();
@@ -57,17 +48,7 @@ describe('CreateUserService', () => {
     await module.close();
   });
 
-  it('delegates the provided password to the password hasher', async () => {
-    passwordHasher.hash.mockResolvedValue('hashed-password');
-    userRepository.create.mockResolvedValue(userEntityFactory.build());
-
-    await service.execute(dto);
-
-    expect(passwordHasher.hash).toHaveBeenCalledWith(dto.password);
-  });
-
   it('persists the password hasher output with the username', async () => {
-    passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockResolvedValue(userEntityFactory.build());
 
     await service.execute(dto);
@@ -80,14 +61,12 @@ describe('CreateUserService', () => {
 
   it('returns the persisted user', async () => {
     const createdUser = userEntityFactory.build();
-    passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockResolvedValue(createdUser);
 
     await expect(service.execute(dto)).resolves.toBe(createdUser);
   });
 
   it('translates unique-constraint errors into duplicate username errors', async () => {
-    passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockRejectedValue(
       new Prisma.PrismaClientKnownRequestError('Unique constraint failed.', {
         code: 'P2002',
@@ -101,7 +80,6 @@ describe('CreateUserService', () => {
   });
 
   it('wraps unexpected errors as user errors', async () => {
-    passwordHasher.hash.mockResolvedValue('hashed-password');
     userRepository.create.mockRejectedValue(new Error('Database error'));
 
     await expect(service.execute(dto)).rejects.toBeInstanceOf(UserException);
