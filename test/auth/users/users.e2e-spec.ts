@@ -10,10 +10,10 @@ import {
   vi,
 } from 'vitest';
 
-import { AppModule } from '@/app.module.js';
-import { configureApp } from '@/config/app.config.js';
-import { PrismaService } from '@/database/prisma.service.js';
-import { AppLogger } from '@/logging/app-logger.js';
+import { AppModule } from '#src/app.module.js';
+import { configureApp } from '#src/config/app.config.js';
+import { PrismaService } from '#src/database/prisma.service.js';
+import { AppLogger } from '#src/logging/app-logger.js';
 
 describe('/auth/users', () => {
   let app: INestApplication;

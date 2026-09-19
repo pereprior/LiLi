@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '@/auth/users/entities/user.entity.js';
-import { UserException } from '@/auth/users/exceptions/user.exception.js';
-import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.exception.js';
-import { UserRepository } from '@/auth/users/repositories/user.repository.js';
-import { UserLoggerContext } from '@/auth/users/types/enum/user-logger-context.enum.js';
-import { AppLogger } from '@/logging/app-logger.js';
+import { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import { UserException } from '#src/auth/users/exceptions/user.exception.js';
+import { UserNotFoundException } from '#src/auth/users/exceptions/user-not-found.exception.js';
+import { UserRepository } from '#src/auth/users/repositories/user.repository.js';
+import { UserLoggerContext } from '#src/auth/users/types/enum/user-logger-context.enum.js';
+import { AppLogger } from '#src/logging/app-logger.js';
 
 @Injectable()
 export class FindUserService {

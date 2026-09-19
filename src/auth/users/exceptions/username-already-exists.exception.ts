@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
-import { UserException } from '@/auth/users/exceptions/user.exception.js';
+import { UserException } from '#src/auth/users/exceptions/user.exception.js';
 
 export class UsernameAlreadyExistsException extends UserException {
   constructor() {

@@ -1,6 +1,6 @@
-import type { UserEntity } from '@/auth/users/entities/user.entity.js';
-import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
-import type { UpdateUserData } from '@/auth/users/types/data/update-user.data.js';
+import type { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import type { CreateUserData } from '#src/auth/users/types/data/create-user.data.js';
+import type { UpdateUserData } from '#src/auth/users/types/data/update-user.data.js';
 
 export abstract class UserRepository {
   abstract create(data: CreateUserData): Promise<UserEntity>;

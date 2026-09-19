@@ -2,7 +2,7 @@ import { scryptSync } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
 
-import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
+import { PasswordHasherUtils } from '#src/auth/users/utils/password-hasher/password-hasher.utils.js';
 
 describe('PasswordHasherUtils', () => {
   const SCRYPT_KEY_LENGTH = 64;

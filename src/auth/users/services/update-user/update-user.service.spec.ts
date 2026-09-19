@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
-import { userEntityFactory } from '@test-factories/auth/users/user-entity.factory.js';
 import {
   afterAll,
   afterEach,
@@ -12,15 +11,16 @@ import {
   vi,
 } from 'vitest';
 
-import type { UserEntity } from '@/auth/users/entities/user.entity.js';
-import { UserException } from '@/auth/users/exceptions/user.exception.js';
-import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.exception.js';
-import { UsernameAlreadyExistsException } from '@/auth/users/exceptions/username-already-exists.exception.js';
-import { UserRepository } from '@/auth/users/repositories/user.repository.js';
-import { UpdateUserService } from '@/auth/users/services/update-user/update-user.service.js';
-import type { UpdateUserData } from '@/auth/users/types/data/update-user.data.js';
-import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
-import { AppLogger } from '@/logging/app-logger.js';
+import type { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import { UserException } from '#src/auth/users/exceptions/user.exception.js';
+import { UserNotFoundException } from '#src/auth/users/exceptions/user-not-found.exception.js';
+import { UsernameAlreadyExistsException } from '#src/auth/users/exceptions/username-already-exists.exception.js';
+import { UserRepository } from '#src/auth/users/repositories/user.repository.js';
+import { UpdateUserService } from '#src/auth/users/services/update-user/update-user.service.js';
+import type { UpdateUserData } from '#src/auth/users/types/data/update-user.data.js';
+import { PasswordHasherUtils } from '#src/auth/users/utils/password-hasher/password-hasher.utils.js';
+import { AppLogger } from '#src/logging/app-logger.js';
+import { userEntityFactory } from '#test-factories/auth/users/user-entity.factory.js';
 
 describe('UpdateUserService', () => {
   let module: TestingModule;

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateUserDto } from '@/auth/users/dto/create-user.dto.js';
-import { UserEntity } from '@/auth/users/entities/user.entity.js';
-import { UserException } from '@/auth/users/exceptions/user.exception.js';
-import { UsernameAlreadyExistsException } from '@/auth/users/exceptions/username-already-exists.exception.js';
-import { UserRepository } from '@/auth/users/repositories/user.repository.js';
-import { UserLoggerContext } from '@/auth/users/types/enum/user-logger-context.enum.js';
-import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
-import { PrismaErrorUtils } from '@/database/utils/prisma-error.utils.js';
-import { AppLogger } from '@/logging/app-logger.js';
+import { CreateUserDto } from '#src/auth/users/dto/create-user.dto.js';
+import { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import { UserException } from '#src/auth/users/exceptions/user.exception.js';
+import { UsernameAlreadyExistsException } from '#src/auth/users/exceptions/username-already-exists.exception.js';
+import { UserRepository } from '#src/auth/users/repositories/user.repository.js';
+import { UserLoggerContext } from '#src/auth/users/types/enum/user-logger-context.enum.js';
+import { PasswordHasherUtils } from '#src/auth/users/utils/password-hasher/password-hasher.utils.js';
+import { PrismaErrorUtils } from '#src/database/utils/prisma-error.utils.js';
+import { AppLogger } from '#src/logging/app-logger.js';
 
 @Injectable()
 export class CreateUserService {

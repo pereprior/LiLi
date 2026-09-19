@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '@/auth/users/entities/user.entity.js';
-import { UserMapper } from '@/auth/users/mappers/user.mapper.js';
-import { UserRepository } from '@/auth/users/repositories/user.repository.js';
-import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
-import type { UpdateUserData } from '@/auth/users/types/data/update-user.data.js';
-import { PrismaService } from '@/database/prisma.service.js';
+import { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import { UserMapper } from '#src/auth/users/mappers/user.mapper.js';
+import { UserRepository } from '#src/auth/users/repositories/user.repository.js';
+import type { CreateUserData } from '#src/auth/users/types/data/create-user.data.js';
+import type { UpdateUserData } from '#src/auth/users/types/data/update-user.data.js';
+import { PrismaService } from '#src/database/prisma.service.js';
 
 @Injectable()
 export class PrismaUserRepository extends UserRepository {

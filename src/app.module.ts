@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { UsersModule } from '@/auth/users/users.module.js';
-import { getEnvironmentFilePath } from '@/config/environment.config.js';
-import { DatabaseModule } from '@/database/database.module.js';
+import { AuthModule } from '#src/auth/auth.module.js';
+import { getEnvironmentFilePath } from '#src/config/environment.config.js';
+import { DatabaseModule } from '#src/database/database.module.js';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { DatabaseModule } from '@/database/database.module.js';
       expandVariables: true,
     }),
     DatabaseModule,
-    UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

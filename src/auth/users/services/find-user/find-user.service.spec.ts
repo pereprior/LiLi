@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { userEntityFactory } from '@test-factories/auth/users/user-entity.factory.js';
 import {
   afterAll,
   afterEach,
@@ -11,12 +10,13 @@ import {
   vi,
 } from 'vitest';
 
-import type { UserEntity } from '@/auth/users/entities/user.entity.js';
-import { UserException } from '@/auth/users/exceptions/user.exception.js';
-import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.exception.js';
-import { UserRepository } from '@/auth/users/repositories/user.repository.js';
-import { FindUserService } from '@/auth/users/services/find-user/find-user.service.js';
-import { AppLogger } from '@/logging/app-logger.js';
+import type { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import { UserException } from '#src/auth/users/exceptions/user.exception.js';
+import { UserNotFoundException } from '#src/auth/users/exceptions/user-not-found.exception.js';
+import { UserRepository } from '#src/auth/users/repositories/user.repository.js';
+import { FindUserService } from '#src/auth/users/services/find-user/find-user.service.js';
+import { AppLogger } from '#src/logging/app-logger.js';
+import { userEntityFactory } from '#test-factories/auth/users/user-entity.factory.js';
 
 describe('FindUserService', () => {
   let module: TestingModule;

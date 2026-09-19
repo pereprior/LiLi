@@ -11,11 +11,11 @@ import {
   vi,
 } from 'vitest';
 
-import { UserException } from '@/auth/users/exceptions/user.exception.js';
-import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.exception.js';
-import { UserRepository } from '@/auth/users/repositories/user.repository.js';
-import { DeleteUserService } from '@/auth/users/services/delete-user/delete-user.service.js';
-import { AppLogger } from '@/logging/app-logger.js';
+import { UserException } from '#src/auth/users/exceptions/user.exception.js';
+import { UserNotFoundException } from '#src/auth/users/exceptions/user-not-found.exception.js';
+import { UserRepository } from '#src/auth/users/repositories/user.repository.js';
+import { DeleteUserService } from '#src/auth/users/services/delete-user/delete-user.service.js';
+import { AppLogger } from '#src/logging/app-logger.js';
 
 describe('DeleteUserService', () => {
   let module: TestingModule;

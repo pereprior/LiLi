@@ -20,12 +20,8 @@
     "inlineSources": true,
     "noEmit": true,
     "paths": {
-      "@prisma/*": ["./prisma/*"],
-      "@prisma/models/*": ["./prisma/models/*"],
-      "@/*": ["./src/*"],
-      "@auth/*": ["./src/auth/*"],
-      "@auth/users/*": ["./src/auth/users/*"],
-      "@test-factories/*": ["./test-factories/*"]
+      "#src/*": ["./src/*"],
+      "#test-factories/*": ["./test-factories/*"]
     }
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]

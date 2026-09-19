@@ -1,8 +1,8 @@
 import type { User } from '@prisma/client';
 
-import { UserEntity } from '@/auth/users/entities/user.entity.js';
-import { UserResponse } from '@/auth/users/responses/user.response.js';
-import { UserListResponse } from '@/auth/users/responses/user-list.response.js';
+import { UserEntity } from '#src/auth/users/entities/user.entity.js';
+import { UserResponse } from '#src/auth/users/responses/user.response.js';
+import { UserListResponse } from '#src/auth/users/responses/user-list.response.js';
 
 export class UserMapper {
   static toEntity(user: User): UserEntity {

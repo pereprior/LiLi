@@ -5,6 +5,10 @@
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
+  "imports": {
+    "#src/*": "./dist/*",
+    "#test-factories/*": "./dist/test-factories/*"
+  },
   "engines": {
     "node": ">=24.0.0"
   },
