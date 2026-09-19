@@ -4,12 +4,12 @@ import { UserEntity } from '@/auth/users/entities/user.entity.js';
 import { UserException } from '@/auth/users/exceptions/user.exception.js';
 import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.exception.js';
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
+import { UserLoggerContext } from '@/auth/users/types/enum/user-logger-context.enum.js';
 import { AppLogger } from '@/logging/app-logger.js';
-import { LoggerContext } from '@/logging/logger-context.enum.js';
 
 @Injectable()
 export class FindUserService {
-  private readonly logger = new AppLogger(LoggerContext.FIND_USER_SERVICE);
+  private readonly logger = new AppLogger(UserLoggerContext.FIND_USER_SERVICE);
 
   constructor(private readonly userRepository: UserRepository) {}
 

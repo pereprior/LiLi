@@ -5,14 +5,16 @@ import { UserEntity } from '@/auth/users/entities/user.entity.js';
 import { UserException } from '@/auth/users/exceptions/user.exception.js';
 import { UsernameAlreadyExistsException } from '@/auth/users/exceptions/username-already-exists.exception.js';
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
+import { UserLoggerContext } from '@/auth/users/types/enum/user-logger-context.enum.js';
 import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
 import { PrismaErrorUtils } from '@/database/utils/prisma-error.utils.js';
 import { AppLogger } from '@/logging/app-logger.js';
-import { LoggerContext } from '@/logging/logger-context.enum.js';
 
 @Injectable()
 export class CreateUserService {
-  private readonly logger = new AppLogger(LoggerContext.CREATE_USER_SERVICE);
+  private readonly logger = new AppLogger(
+    UserLoggerContext.CREATE_USER_SERVICE,
+  );
 
   constructor(private readonly userRepository: UserRepository) {}
 

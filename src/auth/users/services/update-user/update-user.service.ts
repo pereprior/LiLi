@@ -7,14 +7,16 @@ import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.ex
 import { UsernameAlreadyExistsException } from '@/auth/users/exceptions/username-already-exists.exception.js';
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
 import type { UpdateUserData } from '@/auth/users/types/data/update-user.data.js';
+import { UserLoggerContext } from '@/auth/users/types/enum/user-logger-context.enum.js';
 import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
 import { PrismaErrorUtils } from '@/database/utils/prisma-error.utils.js';
 import { AppLogger } from '@/logging/app-logger.js';
-import { LoggerContext } from '@/logging/logger-context.enum.js';
 
 @Injectable()
 export class UpdateUserService {
-  private readonly logger = new AppLogger(LoggerContext.UPDATE_USER_SERVICE);
+  private readonly logger = new AppLogger(
+    UserLoggerContext.UPDATE_USER_SERVICE,
+  );
 
   constructor(private readonly userRepository: UserRepository) {}
 

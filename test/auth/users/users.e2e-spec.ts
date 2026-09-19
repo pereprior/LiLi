@@ -1,10 +1,19 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 import { AppModule } from '@/app.module.js';
 import { configureApp } from '@/config/app.config.js';
 import { PrismaService } from '@/database/prisma.service.js';
+import { AppLogger } from '@/logging/app-logger.js';
 
 describe('/auth/users', () => {
   let app: INestApplication;
@@ -12,6 +21,9 @@ describe('/auth/users', () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
+    vi.spyOn(AppLogger.prototype, 'log').mockImplementation(() => undefined);
+    vi.spyOn(AppLogger.prototype, 'error').mockImplementation(() => undefined);
+
     const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -30,6 +42,7 @@ describe('/auth/users', () => {
   afterAll(async () => {
     await prisma.user.deleteMany();
     await app.close();
+    vi.restoreAllMocks();
   });
 
   describe('POST /auth/users', () => {

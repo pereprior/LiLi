@@ -1,11 +1,9 @@
 import { Logger } from '@nestjs/common';
 
-import type { LoggerContext } from '@/logging/logger-context.enum.js';
-
 export class AppLogger {
   private readonly logger: Logger;
 
-  constructor(context: LoggerContext) {
+  constructor(context: string) {
     this.logger = new Logger(context);
   }
 

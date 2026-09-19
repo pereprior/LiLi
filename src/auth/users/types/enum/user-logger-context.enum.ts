@@ -1,4 +1,4 @@
-export enum LoggerContext {
+export enum UserLoggerContext {
   CREATE_USER_SERVICE = 'CreateUserService',
   DELETE_USER_SERVICE = 'DeleteUserService',
   FIND_USER_SERVICE = 'FindUserService',

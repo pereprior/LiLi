@@ -11,10 +11,8 @@ import {
 } from '@nestjs/common';
 
 import { CreateUserDto } from '@/auth/users/dto/create-user.dto.js';
-import { ParamUuidDto } from '@/auth/users/dto/param-uuid.dto.js';
 import { UpdateUserDto } from '@/auth/users/dto/update-user.dto.js';
 import { UserMapper } from '@/auth/users/mappers/user.mapper.js';
-import { DeleteResponse } from '@/auth/users/responses/delete.response.js';
 import { UserResponse } from '@/auth/users/responses/user.response.js';
 import { UserListResponse } from '@/auth/users/responses/user-list.response.js';
 import { CreateUserService } from '@/auth/users/services/create-user/create-user.service.js';
@@ -22,6 +20,8 @@ import { DeleteUserService } from '@/auth/users/services/delete-user/delete-user
 import { FindUserService } from '@/auth/users/services/find-user/find-user.service.js';
 import { ListUsersService } from '@/auth/users/services/list-users/list-users.service.js';
 import { UpdateUserService } from '@/auth/users/services/update-user/update-user.service.js';
+import { ParamUuidDto } from '@/common/dto/param-uuid.dto.js';
+import { DeleteResponse } from '@/common/responses/delete.response.js';
 
 @Controller('auth/users')
 export class UsersController {
