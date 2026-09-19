@@ -16,15 +16,51 @@ jobs:
         with:
           version: latest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
       - run: pnpm run build
 
-  # test:
-  #   name: Tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: pnpm/action-setup@v4
-  #       with:
-  #         version: latest
-  #     - run: pnpm install --frozen-lockfile
-  #     - run: pnpm run test
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate
+        env:
+          DATABASE_URL: postgresql://lili:lili@localhost:5432/lili?schema=public
+      - run: pnpm test
+
+  test-e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: lili_test
+          POSTGRES_USER: lili_test
+          POSTGRES_PASSWORD: lili_test
+        options: >-
+          --health-cmd "pg_isready -U lili_test -d lili_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      DATABASE_URL: postgresql://lili_test:lili_test@localhost:5432/lili_test?schema=public
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate
+      - run: pnpm db:e2e:migrate
+      - run: pnpm run test:e2e:run

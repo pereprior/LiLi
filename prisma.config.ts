@@ -2,10 +2,16 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { defineConfig, env } from 'prisma/config';
 
-dotenvExpand.expand(dotenv.config());
+import { getEnvironmentFilePath } from './src/config/environment.config.js';
+
+dotenvExpand.expand(
+  dotenv.config({
+    path: getEnvironmentFilePath(),
+  }),
+);
 
 export default defineConfig({
-  schema: 'prisma/schema.prisma',
+  schema: 'prisma',
   migrations: {
     path: 'prisma/migrations',
   },

@@ -3,7 +3,7 @@
     "target": "ES2024",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "types": ["node"],
     "strict": true,
@@ -18,7 +18,11 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "inlineSources": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "#src/*": ["./src/*"],
+      "#test-factories/*": ["./test-factories/*"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }
