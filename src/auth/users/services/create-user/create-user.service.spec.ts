@@ -43,7 +43,7 @@ describe('CreateUserService', () => {
   beforeEach(async () => {
     userRepository = {
       create: vi.fn<(data: CreateUserData) => Promise<UserEntity>>(),
-    } satisfies UserRepository;
+    } satisfies Pick<UserRepository, 'create'>;
     vi.spyOn(PasswordHasherUtils, 'hash').mockResolvedValue('hashed-password');
 
     module = await Test.createTestingModule({
@@ -91,6 +91,16 @@ describe('CreateUserService', () => {
         code: 'P2002',
         clientVersion: '7.10.0',
       }),
+    );
+
+    await expect(service.execute(dto)).rejects.toBeInstanceOf(
+      UsernameAlreadyExistsException,
+    );
+  });
+
+  it('preserves user errors', async () => {
+    userRepository.create.mockRejectedValue(
+      new UsernameAlreadyExistsException(),
     );
 
     await expect(service.execute(dto)).rejects.toBeInstanceOf(

@@ -4,6 +4,7 @@ import { UserEntity } from '@/auth/users/entities/user.entity.js';
 import { UserMapper } from '@/auth/users/mappers/user.mapper.js';
 import { UserRepository } from '@/auth/users/repositories/user.repository.js';
 import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
+import type { UpdateUserData } from '@/auth/users/types/data/update-user.data.js';
 import { PrismaService } from '@/database/prisma.service.js';
 
 @Injectable()
@@ -16,6 +17,41 @@ export class PrismaUserRepository extends UserRepository {
     const record = await this.prisma.user.create({
       data,
     });
+
     return UserMapper.toEntity(record);
+  }
+
+  override async findAll(): Promise<UserEntity[]> {
+    const records = await this.prisma.user.findMany({
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return UserMapper.toListEntity(records);
+  }
+
+  override async findByUuid(uuid: string): Promise<UserEntity | null> {
+    const record = await this.prisma.user.findUnique({
+      where: { uuid },
+    });
+
+    return record ? UserMapper.toEntity(record) : null;
+  }
+
+  override async update(
+    uuid: string,
+    data: UpdateUserData,
+  ): Promise<UserEntity> {
+    const record = await this.prisma.user.update({
+      where: { uuid },
+      data,
+    });
+
+    return UserMapper.toEntity(record);
+  }
+
+  override async delete(uuid: string): Promise<void> {
+    await this.prisma.user.delete({
+      where: { uuid },
+    });
   }
 }

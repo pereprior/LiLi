@@ -1,0 +1,42 @@
+import { Injectable } from '@nestjs/common';
+
+import { UserEntity } from '@/auth/users/entities/user.entity.js';
+import { UserException } from '@/auth/users/exceptions/user.exception.js';
+import { UserNotFoundException } from '@/auth/users/exceptions/user-not-found.exception.js';
+import { UserRepository } from '@/auth/users/repositories/user.repository.js';
+import { AppLogger } from '@/logging/app-logger.js';
+import { LoggerContext } from '@/logging/logger-context.enum.js';
+
+@Injectable()
+export class FindUserService {
+  private readonly logger = new AppLogger(LoggerContext.FIND_USER_SERVICE);
+
+  constructor(private readonly userRepository: UserRepository) {}
+
+  async execute(uuid: string): Promise<UserEntity> {
+    this.logger.log('Finding user.');
+
+    try {
+      const user = await this.userRepository.findByUuid(uuid);
+
+      if (!user) {
+        throw new UserNotFoundException();
+      }
+
+      this.logger.log('User found successfully.');
+
+      return user;
+    } catch (error) {
+      this.logger.error(
+        'Failed to find user.',
+        error instanceof Error ? error : undefined,
+      );
+
+      if (error instanceof UserException) {
+        throw error;
+      }
+
+      throw new UserException();
+    }
+  }
+}
