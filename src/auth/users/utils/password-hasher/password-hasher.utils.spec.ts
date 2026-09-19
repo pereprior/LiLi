@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
 
 describe('PasswordHasherUtils', () => {
-  const HASH_PARTS_SEPARATOR = ':';
   const SCRYPT_KEY_LENGTH = 64;
   const HEX_ENCODING = 'hex';
 
@@ -13,7 +12,7 @@ describe('PasswordHasherUtils', () => {
     const password = 'a-secure-password';
 
     const passwordHash = await PasswordHasherUtils.hash(password);
-    const [salt = '', hash] = passwordHash.split(HASH_PARTS_SEPARATOR);
+    const [salt = '', hash] = passwordHash.split(':');
     const expectedHash = scryptSync(password, salt, SCRYPT_KEY_LENGTH).toString(
       HEX_ENCODING,
     );

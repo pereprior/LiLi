@@ -15,17 +15,21 @@
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "vitest run",
+    "test:e2e": "pnpm db:e2e:up && pnpm db:e2e:migrate && vitest run --config vitest.config.e2e.ts",
     "test:watch": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "ci": "pnpm typecheck && pnpm lint && pnpm build && pnpm test && pnpm format:check",
+    "ci": "pnpm typecheck && pnpm lint && pnpm build && pnpm test && pnpm test:e2e && pnpm format:check",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:e2e:up": "docker compose --env-file .env.test -f docker-compose.e2e.yml up -d --wait",
+    "db:e2e:down": "docker compose --env-file .env.test -f docker-compose.e2e.yml down -v",
+    "db:e2e:migrate": "NODE_ENV=test prisma migrate deploy"
   },
   "dependencies": {
     "@nestjs/common": "12.0.1",

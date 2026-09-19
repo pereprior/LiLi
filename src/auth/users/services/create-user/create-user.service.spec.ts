@@ -1,7 +1,16 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
 import { userEntityFactory } from '@test-factories/auth/users/user-entity.factory.js';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 import type { UserEntity } from '@/auth/users/entities/user.entity.js';
 import { UserException } from '@/auth/users/exceptions/user.exception.js';
@@ -10,6 +19,7 @@ import { UserRepository } from '@/auth/users/repositories/user.repository.js';
 import { CreateUserService } from '@/auth/users/services/create-user/create-user.service.js';
 import type { CreateUserData } from '@/auth/users/types/data/create-user.data.js';
 import { PasswordHasherUtils } from '@/auth/users/utils/password-hasher/password-hasher.utils.js';
+import { AppLogger } from '@/logging/app-logger.js';
 
 describe('CreateUserService', () => {
   let module: TestingModule;
@@ -24,6 +34,11 @@ describe('CreateUserService', () => {
     username: 'lili',
     password: 'a-secure-password',
   };
+
+  beforeAll(() => {
+    vi.spyOn(AppLogger.prototype, 'log').mockImplementation(() => undefined);
+    vi.spyOn(AppLogger.prototype, 'error').mockImplementation(() => undefined);
+  });
 
   beforeEach(async () => {
     userRepository = {
@@ -46,6 +61,10 @@ describe('CreateUserService', () => {
 
   afterEach(async () => {
     await module.close();
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks();
   });
 
   it('persists the password hasher output with the username', async () => {

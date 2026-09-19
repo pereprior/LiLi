@@ -28,5 +28,5 @@
       "@test-factories/*": ["./test-factories/*"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }
