@@ -13,20 +13,31 @@ export class AuthEnvironmentValueUtils {
     const rawValue = this.requireValue(value, name);
 
     try {
-      return new URL(rawValue);
+      const url = new URL(rawValue);
+
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        throw new Error();
+      }
+
+      return url;
     } catch {
-      throw new Error(`${name} must be a valid URL.`);
+      throw new Error(`${name} must be a valid HTTP(S) URL.`);
     }
   }
 
   static parsePositiveInteger(value: string | undefined, name: string): number {
     const rawValue = this.requireValue(value, name);
+    const parsedValue = Number(rawValue);
 
-    if (!/^\d+$/u.test(rawValue) || Number(rawValue) <= 0) {
+    if (
+      !/^\d+$/u.test(rawValue) ||
+      !Number.isSafeInteger(parsedValue) ||
+      parsedValue <= 0
+    ) {
       throw new Error(`${name} must be a positive integer.`);
     }
 
-    return Number(rawValue);
+    return parsedValue;
   }
 
   static parseEmailList(value: string | undefined, name: string): Set<string> {

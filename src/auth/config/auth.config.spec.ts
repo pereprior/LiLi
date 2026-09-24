@@ -73,6 +73,29 @@ describe('createAuthConfig', () => {
     ).toThrow('AUTH_GOOGLE_ALLOWED_EMAILS must not be empty.');
   });
 
+  it('rejects an idle TTL greater than the absolute TTL', () => {
+    expect(() =>
+      createAuthConfig({
+        ...validEnvironment,
+        AUTH_SESSION_ABSOLUTE_TTL_SECONDS: '600',
+        AUTH_SESSION_IDLE_TTL_SECONDS: '601',
+      }),
+    ).toThrow(
+      'AUTH_SESSION_IDLE_TTL_SECONDS must be less than or equal to AUTH_SESSION_ABSOLUTE_TTL_SECONDS.',
+    );
+  });
+
+  it('rejects a touch interval equal to the idle TTL', () => {
+    expect(() =>
+      createAuthConfig({
+        ...validEnvironment,
+        AUTH_SESSION_IDLE_TTL_SECONDS: '900',
+      }),
+    ).toThrow(
+      'AUTH_SESSION_TOUCH_INTERVAL_SECONDS must be less than AUTH_SESSION_IDLE_TTL_SECONDS.',
+    );
+  });
+
   it('always uses secure cookies in production', () => {
     const config = createAuthConfig({
       ...validEnvironment,

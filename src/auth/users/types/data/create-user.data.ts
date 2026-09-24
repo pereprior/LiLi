@@ -1,4 +1,4 @@
 export type CreateUserData = {
   username: string;
-  passwordHash: string;
+  passwordHash?: string | null;
 };
