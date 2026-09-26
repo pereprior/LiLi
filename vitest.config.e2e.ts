@@ -20,10 +20,7 @@ export default defineConfig({
   test: {
     clearMocks: true,
     environment: 'node',
-    env: {
-      ...testEnvironment,
-      NODE_ENV: 'test',
-    },
+    env: testEnvironment,
     exclude: [...configDefaults.exclude, 'dist/**'],
     fileParallelism: false,
     include: ['test/**/*.e2e-spec.ts'],

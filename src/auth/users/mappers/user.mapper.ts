@@ -3,6 +3,8 @@ import type { User } from '@prisma/client';
 import { UserEntity } from '#src/auth/users/entities/user.entity.js';
 import { UserResponse } from '#src/auth/users/responses/user.response.js';
 import { UserListResponse } from '#src/auth/users/responses/user-list.response.js';
+import { UserRole } from '#src/auth/users/types/enum/user-role.enum.js';
+import { UserStatus } from '#src/auth/users/types/enum/user-status.enum.js';
 
 export class UserMapper {
   static toEntity(user: User): UserEntity {
@@ -10,6 +12,8 @@ export class UserMapper {
       user.uuid,
       user.username,
       user.passwordHash,
+      UserRole[user.role],
+      UserStatus[user.status],
       user.createdAt,
       user.updatedAt,
     );
