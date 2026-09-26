@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
 import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
@@ -7,7 +8,6 @@ import { SessionUserUnavailableException } from '#src/auth/sessions/exceptions/s
 import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
 import type { CreatedSession } from '#src/auth/sessions/types/created-session.type.js';
 import { SessionLoggerContext } from '#src/auth/sessions/types/enum/session-logger-context.enum.js';
-import { SessionSecretsUtils } from '#src/auth/sessions/utils/session-secrets/session-secrets.utils.js';
 import { PrismaErrorUtils } from '#src/database/utils/prisma-error.utils.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 
@@ -27,16 +27,16 @@ export class CreateSessionService {
 
     try {
       const now = new Date();
-      const token = SessionSecretsUtils.generate();
-      const csrfToken = SessionSecretsUtils.generate();
+      const token = AuthSecretsUtils.generate();
+      const csrfToken = AuthSecretsUtils.generate();
       const expiresAt = new Date(
         now.getTime() + this.config.session.absoluteTtlSeconds * 1000,
       );
 
       await this.repository.create({
         userUuid,
-        tokenHash: SessionSecretsUtils.hash(token),
-        csrfTokenHash: SessionSecretsUtils.hash(csrfToken),
+        tokenHash: AuthSecretsUtils.hash(token),
+        csrfTokenHash: AuthSecretsUtils.hash(csrfToken),
         expiresAt,
         lastUsedAt: now,
       });

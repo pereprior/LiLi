@@ -10,13 +10,13 @@ import {
   vi,
 } from 'vitest';
 
+import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
 import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
 import type { SessionEntity } from '#src/auth/sessions/entities/session.entity.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
 import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
 import { ValidateSessionService } from '#src/auth/sessions/services/validate-session/validate-session.service.js';
-import { SessionSecretsUtils } from '#src/auth/sessions/utils/session-secrets/session-secrets.utils.js';
 import { UserStatus } from '#src/auth/users/types/enum/user-status.enum.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 import { userEntityFactory } from '#test-factories/auth/users/user-entity.factory.js';
@@ -83,7 +83,7 @@ describe('ValidateSessionService', () => {
     vi.restoreAllMocks();
   });
 
-  it('returns the current user for a valid session', async () => {
+  it('returns the session entity for a valid session', async () => {
     const session: SessionEntity = {
       uuid: 'session-1',
       userUuid: 'user-1',
@@ -95,11 +95,7 @@ describe('ValidateSessionService', () => {
     };
     sessionRepository.findByTokenHash.mockResolvedValue(session);
 
-    await expect(service.execute(token)).resolves.toEqual({
-      uuid: session.uuid,
-      user: session.user,
-      csrfTokenHash: session.csrfTokenHash,
-    });
+    await expect(service.execute(token)).resolves.toBe(session);
   });
 
   it('looks up the hash of the provided token', async () => {
@@ -108,7 +104,7 @@ describe('ValidateSessionService', () => {
     await service.execute(token);
 
     expect(sessionRepository.findByTokenHash).toHaveBeenCalledWith(
-      SessionSecretsUtils.hash(token),
+      AuthSecretsUtils.hash(token),
     );
   });
 
@@ -191,8 +187,9 @@ describe('ValidateSessionService', () => {
     sessionRepository.findByTokenHash.mockResolvedValue(session);
     sessionRepository.touchIfValid.mockResolvedValue(true);
 
-    await service.execute(token);
+    await expect(service.execute(token)).resolves.toBe(session);
 
+    expect(session.lastUsedAt).toEqual(now);
     expect(sessionRepository.touchIfValid).toHaveBeenCalledWith(
       session.uuid,
       now,

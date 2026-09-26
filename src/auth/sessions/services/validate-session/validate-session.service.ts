@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
 import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
+import type { SessionEntity } from '#src/auth/sessions/entities/session.entity.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
 import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
 import { SessionLoggerContext } from '#src/auth/sessions/types/enum/session-logger-context.enum.js';
-import type { ValidatedSession } from '#src/auth/sessions/types/validated-session.type.js';
-import { SessionSecretsUtils } from '#src/auth/sessions/utils/session-secrets/session-secrets.utils.js';
 import { UserStatus } from '#src/auth/users/types/enum/user-status.enum.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 
@@ -21,11 +21,11 @@ export class ValidateSessionService {
     @Inject(authConfig.KEY) private readonly config: AuthConfig,
   ) {}
 
-  async execute(token: string): Promise<ValidatedSession | null> {
+  async execute(token: string): Promise<SessionEntity | null> {
     try {
       const now = new Date();
       const session = await this.repository.findByTokenHash(
-        SessionSecretsUtils.hash(token),
+        AuthSecretsUtils.hash(token),
       );
       if (!session) return null;
 
@@ -51,13 +51,10 @@ export class ValidateSessionService {
           idleCutoff,
         );
         if (!touched) return null;
+        session.lastUsedAt = now;
       }
 
-      return {
-        uuid: session.uuid,
-        user: session.user,
-        csrfTokenHash: session.csrfTokenHash,
-      };
+      return session;
     } catch (error) {
       this.logger.error('Failed to validate session.');
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
 import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
 import { SessionLoggerContext } from '#src/auth/sessions/types/enum/session-logger-context.enum.js';
-import { SessionSecretsUtils } from '#src/auth/sessions/utils/session-secrets/session-secrets.utils.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class RevokeSessionService {
 
     try {
       await this.repository.revokeByTokenHash(
-        SessionSecretsUtils.hash(token),
+        AuthSecretsUtils.hash(token),
         new Date(),
       );
 

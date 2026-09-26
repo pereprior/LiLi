@@ -11,6 +11,7 @@ import {
   vi,
 } from 'vitest';
 
+import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
 import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
@@ -18,7 +19,6 @@ import { SessionUserUnavailableException } from '#src/auth/sessions/exceptions/s
 import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
 import { CreateSessionService } from '#src/auth/sessions/services/create-session/create-session.service.js';
 import type { CreateSessionData } from '#src/auth/sessions/types/data/create-session.data.js';
-import { SessionSecretsUtils } from '#src/auth/sessions/utils/session-secrets/session-secrets.utils.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 
 const now = new Date('2026-09-24T12:00:00.000Z');
@@ -78,8 +78,8 @@ describe('CreateSessionService', () => {
 
     expect(sessionRepository.create).toHaveBeenCalledWith({
       userUuid,
-      tokenHash: SessionSecretsUtils.hash(created.token),
-      csrfTokenHash: SessionSecretsUtils.hash(created.csrfToken),
+      tokenHash: AuthSecretsUtils.hash(created.token),
+      csrfTokenHash: AuthSecretsUtils.hash(created.csrfToken),
       lastUsedAt: now,
       expiresAt: new Date(
         now.getTime() + config.session.absoluteTtlSeconds * 1000,
