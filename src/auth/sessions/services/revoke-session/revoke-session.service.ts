@@ -2,35 +2,23 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
-import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
-import { SessionLoggerContext } from '#src/auth/sessions/types/enum/session-logger-context.enum.js';
+import { PrismaService } from '#src/database/prisma.service.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 
 @Injectable()
 export class RevokeSessionService {
-  private readonly logger = new AppLogger(
-    SessionLoggerContext.REVOKE_SESSION_SERVICE,
-  );
+  private readonly logger = new AppLogger('RevokeSessionService');
 
-  constructor(private readonly repository: SessionRepository) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(token: string): Promise<void> {
-    this.logger.log('Revoking session.');
-
     try {
-      await this.repository.revokeByTokenHash(
-        AuthSecretsUtils.hash(token),
-        new Date(),
-      );
-
-      this.logger.log('Session revoked successfully.');
-    } catch (error) {
+      await this.prisma.session.updateMany({
+        where: { tokenHash: AuthSecretsUtils.hash(token), revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+    } catch {
       this.logger.error('Failed to revoke session.');
-
-      if (error instanceof SessionException) {
-        throw error;
-      }
-
       throw new SessionException();
     }
   }

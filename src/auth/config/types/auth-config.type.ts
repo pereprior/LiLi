@@ -6,11 +6,5 @@ export type AuthConfig = {
     redirectUri: string;
     allowedEmails: ReadonlySet<string>;
   };
-  session: {
-    absoluteTtlSeconds: number;
-    idleTtlSeconds: number;
-    touchIntervalSeconds: number;
-  };
-  oidcAttemptTtlSeconds: number;
   cookieSecure: boolean;
 };

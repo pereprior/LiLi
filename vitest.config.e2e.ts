@@ -12,9 +12,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '#src': fileURLToPath(new URL('./src', import.meta.url)),
-      '#test-factories': fileURLToPath(
-        new URL('./test-factories', import.meta.url),
-      ),
     },
   },
   test: {

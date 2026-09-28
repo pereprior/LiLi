@@ -3,65 +3,40 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
 import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
-import type { SessionEntity } from '#src/auth/sessions/entities/session.entity.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
-import { SessionRepository } from '#src/auth/sessions/repositories/session.repository.js';
-import { SessionLoggerContext } from '#src/auth/sessions/types/enum/session-logger-context.enum.js';
-import { UserStatus } from '#src/auth/users/types/enum/user-status.enum.js';
+import { PrismaService } from '#src/database/prisma.service.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 
 @Injectable()
 export class ValidateSessionService {
-  private readonly logger = new AppLogger(
-    SessionLoggerContext.VALIDATE_SESSION_SERVICE,
-  );
+  private readonly logger = new AppLogger('ValidateSessionService');
 
   constructor(
-    private readonly repository: SessionRepository,
+    private readonly prisma: PrismaService,
     @Inject(authConfig.KEY) private readonly config: AuthConfig,
   ) {}
 
-  async execute(token: string): Promise<SessionEntity | null> {
+  async execute(
+    token: string,
+  ): Promise<{ userUuid: string; email: string } | null> {
     try {
-      const now = new Date();
-      const session = await this.repository.findByTokenHash(
-        AuthSecretsUtils.hash(token),
-      );
-      if (!session) return null;
+      const session = await this.prisma.session.findUnique({
+        where: { tokenHash: AuthSecretsUtils.hash(token) },
+        include: { user: true },
+      });
 
-      const idleCutoff = new Date(
-        now.getTime() - this.config.session.idleTtlSeconds * 1000,
-      );
       if (
+        !session ||
         session.revokedAt !== null ||
-        session.expiresAt <= now ||
-        session.lastUsedAt <= idleCutoff ||
-        session.user.status !== UserStatus.ACTIVE
+        session.expiresAt <= new Date() ||
+        !this.config.google.allowedEmails.has(session.user.email.toLowerCase())
       ) {
         return null;
       }
 
-      const touchCutoff = new Date(
-        now.getTime() - this.config.session.touchIntervalSeconds * 1000,
-      );
-      if (session.lastUsedAt <= touchCutoff) {
-        const touched = await this.repository.touchIfValid(
-          session.uuid,
-          now,
-          idleCutoff,
-        );
-        if (!touched) return null;
-        session.lastUsedAt = now;
-      }
-
-      return session;
-    } catch (error) {
+      return { userUuid: session.userUuid, email: session.user.email };
+    } catch {
       this.logger.error('Failed to validate session.');
-
-      if (error instanceof SessionException) {
-        throw error;
-      }
-
       throw new SessionException();
     }
   }

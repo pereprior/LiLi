@@ -14,32 +14,6 @@ export function createAuthConfig(
     'APP_ORIGIN',
   );
   const redirectUri = new URL(GOOGLE_CALLBACK_PATH, appOrigin);
-
-  const absoluteTtlSeconds = AuthEnvironmentValueUtils.parsePositiveInteger(
-    environment.AUTH_SESSION_ABSOLUTE_TTL_SECONDS,
-    'AUTH_SESSION_ABSOLUTE_TTL_SECONDS',
-  );
-  const idleTtlSeconds = AuthEnvironmentValueUtils.parsePositiveInteger(
-    environment.AUTH_SESSION_IDLE_TTL_SECONDS,
-    'AUTH_SESSION_IDLE_TTL_SECONDS',
-  );
-  const touchIntervalSeconds = AuthEnvironmentValueUtils.parsePositiveInteger(
-    environment.AUTH_SESSION_TOUCH_INTERVAL_SECONDS,
-    'AUTH_SESSION_TOUCH_INTERVAL_SECONDS',
-  );
-
-  if (idleTtlSeconds > absoluteTtlSeconds) {
-    throw new Error(
-      'AUTH_SESSION_IDLE_TTL_SECONDS must be less than or equal to AUTH_SESSION_ABSOLUTE_TTL_SECONDS.',
-    );
-  }
-
-  if (touchIntervalSeconds >= idleTtlSeconds) {
-    throw new Error(
-      'AUTH_SESSION_TOUCH_INTERVAL_SECONDS must be less than AUTH_SESSION_IDLE_TTL_SECONDS.',
-    );
-  }
-
   const allowedEmails = AuthEnvironmentValueUtils.parseEmailList(
     environment.AUTH_GOOGLE_ALLOWED_EMAILS,
     'AUTH_GOOGLE_ALLOWED_EMAILS',
@@ -62,15 +36,6 @@ export function createAuthConfig(
       redirectUri: redirectUri.toString(),
       allowedEmails,
     },
-    session: {
-      absoluteTtlSeconds,
-      idleTtlSeconds,
-      touchIntervalSeconds,
-    },
-    oidcAttemptTtlSeconds: AuthEnvironmentValueUtils.parsePositiveInteger(
-      environment.AUTH_OIDC_ATTEMPT_TTL_SECONDS,
-      'AUTH_OIDC_ATTEMPT_TTL_SECONDS',
-    ),
     cookieSecure: environment.NODE_ENV === 'production',
   };
 }

@@ -29,7 +29,7 @@ export class OpenidGoogleOidcClient extends GoogleOidcClient {
 
     return oidc.buildAuthorizationUrl(configuration, {
       redirect_uri: this.config.google.redirectUri,
-      scope: 'openid email profile',
+      scope: 'openid email',
       state: data.state,
       nonce: data.nonce,
       code_challenge: codeChallenge,
@@ -67,15 +67,10 @@ export class OpenidGoogleOidcClient extends GoogleOidcClient {
     }
 
     const identity: AuthenticatedExternalIdentity = {
-      issuer: configuration.serverMetadata().issuer,
       subject: claims.sub,
       email: claims.email,
       emailVerified: claims.email_verified,
     };
-
-    if (typeof claims.name === 'string' && claims.name) {
-      identity.displayName = claims.name;
-    }
 
     return identity;
   }

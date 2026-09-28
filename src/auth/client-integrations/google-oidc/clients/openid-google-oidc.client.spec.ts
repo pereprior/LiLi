@@ -53,7 +53,7 @@ describe('OpenidGoogleOidcClient', () => {
     expect(oidc.calculatePKCECodeChallenge).toHaveBeenCalledWith('verifier');
     expect(oidc.buildAuthorizationUrl).toHaveBeenCalledWith(configuration, {
       redirect_uri: config.google.redirectUri,
-      scope: 'openid email profile',
+      scope: 'openid email',
       state: 'state',
       nonce: 'nonce',
       code_challenge: 'challenge',
@@ -109,7 +109,6 @@ describe('OpenidGoogleOidcClient', () => {
         sub: 'google-subject',
         email: 'member@example.com',
         email_verified: true,
-        name: 'Member',
       }),
     });
     const client = new OpenidGoogleOidcClient(config);
@@ -121,35 +120,10 @@ describe('OpenidGoogleOidcClient', () => {
         codeVerifier: 'verifier',
       }),
     ).resolves.toEqual({
-      issuer: 'https://accounts.google.com',
       subject: 'google-subject',
       email: 'member@example.com',
       emailVerified: true,
-      displayName: 'Member',
     });
-  });
-
-  it('omits an absent display name', async () => {
-    oidc.discovery.mockResolvedValue({
-      serverMetadata: (): { issuer: string } => ({
-        issuer: 'https://accounts.google.com',
-      }),
-    });
-    oidc.authorizationCodeGrant.mockResolvedValue({
-      claims: () => ({
-        sub: 'google-subject',
-        email: 'member@example.com',
-        email_verified: true,
-      }),
-    });
-    const client = new OpenidGoogleOidcClient(config);
-
-    const identity = await client.exchangeCode(
-      new URL(config.google.redirectUri),
-      { state: 'state', nonce: 'nonce', codeVerifier: 'verifier' },
-    );
-
-    expect(identity).not.toHaveProperty('displayName');
   });
 
   it('rejects missing required claims', async () => {

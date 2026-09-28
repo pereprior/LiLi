@@ -6,8 +6,7 @@
   "license": "UNLICENSED",
   "type": "module",
   "imports": {
-    "#src/*": "./dist/*",
-    "#test-factories/*": "./dist/test-factories/*"
+    "#src/*": "./dist/*"
   },
   "engines": {
     "node": ">=24.0.0"

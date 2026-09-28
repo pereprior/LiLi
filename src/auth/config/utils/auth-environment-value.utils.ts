@@ -25,21 +25,6 @@ export class AuthEnvironmentValueUtils {
     }
   }
 
-  static parsePositiveInteger(value: string | undefined, name: string): number {
-    const rawValue = this.requireValue(value, name);
-    const parsedValue = Number(rawValue);
-
-    if (
-      !/^\d+$/u.test(rawValue) ||
-      !Number.isSafeInteger(parsedValue) ||
-      parsedValue <= 0
-    ) {
-      throw new Error(`${name} must be a positive integer.`);
-    }
-
-    return parsedValue;
-  }
-
   static parseEmailList(value: string | undefined, name: string): Set<string> {
     const emails = (value ?? '')
       .split(',')

@@ -43,29 +43,6 @@ describe('AuthEnvironmentValueUtils', () => {
     });
   });
 
-  describe('parsePositiveInteger', () => {
-    it.each([undefined, '', '  '])('rejects an empty value', (value) => {
-      expect(() =>
-        AuthEnvironmentValueUtils.parsePositiveInteger(value, 'TTL'),
-      ).toThrow('TTL is required.');
-    });
-
-    it('parses a positive integer', () => {
-      expect(AuthEnvironmentValueUtils.parsePositiveInteger('600', 'TTL')).toBe(
-        600,
-      );
-    });
-
-    it.each(['0', '-1', '1.5', 'invalid', '9007199254740992'])(
-      'rejects an invalid integer',
-      (value) => {
-        expect(() =>
-          AuthEnvironmentValueUtils.parsePositiveInteger(value, 'TTL'),
-        ).toThrow('TTL must be a positive integer.');
-      },
-    );
-  });
-
   describe('parseEmailList', () => {
     it('normalizes and de-duplicates emails', () => {
       expect(

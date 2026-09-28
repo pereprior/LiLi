@@ -3,7 +3,6 @@ model OidcLoginAttempt {
   stateHash    String @unique
   nonce        String
   codeVerifier String
-  returnTo     String
 
   createdAt  DateTime  @default(now())
   expiresAt  DateTime
