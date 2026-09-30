@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { GoogleOidcClient } from '#src/auth/client-integrations/google-oidc/clients/google-oidc.client.js';
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
-import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
-import { OidcLoginException } from '#src/auth/oidc-login-attempts/exceptions/oidc-login.exception.js';
-import { CompleteOidcLoginService } from '#src/auth/oidc-login-attempts/services/complete-oidc-login/complete-oidc-login.service.js';
+import { OidcLoginException } from '#src/auth/google-login/attempts/exceptions/oidc-login.exception.js';
+import { CompleteOidcLoginService } from '#src/auth/google-login/attempts/services/complete-oidc-login/complete-oidc-login.service.js';
+import type { GoogleOidcClient } from '#src/auth/google-login/oidc/clients/google-oidc.client.js';
+import type { AuthConfig } from '#src/auth/types/auth-config.type.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import type { PrismaService } from '#src/database/prisma.service.js';
 
 const now = new Date('2026-09-26T12:00:00.000Z');

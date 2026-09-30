@@ -1,7 +1,7 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 
-import { GoogleOidcClient } from '#src/auth/client-integrations/google-oidc/clients/google-oidc.client.js';
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
+import { GoogleOidcClient } from '#src/auth/google-login/oidc/clients/google-oidc.client.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import { PrismaService } from '#src/database/prisma.service.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 

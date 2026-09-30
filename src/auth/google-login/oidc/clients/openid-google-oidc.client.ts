@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as oidc from 'openid-client';
 
-import { GoogleOidcClient } from '#src/auth/client-integrations/google-oidc/clients/google-oidc.client.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
-import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
-import type { AuthenticatedExternalIdentity } from '#src/auth/identities/types/authenticated-external-identity.type.js';
-import { OidcLoginException } from '#src/auth/oidc-login-attempts/exceptions/oidc-login.exception.js';
+import { OidcLoginException } from '#src/auth/google-login/attempts/exceptions/oidc-login.exception.js';
+import { GoogleOidcClient } from '#src/auth/google-login/oidc/clients/google-oidc.client.js';
+import type { AuthenticatedExternalIdentity } from '#src/auth/google-login/oidc/types/authenticated-external-identity.type.js';
+import type { AuthConfig } from '#src/auth/types/auth-config.type.js';
 
 const GOOGLE_ISSUER = new URL('https://accounts.google.com');
 

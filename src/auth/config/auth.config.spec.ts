@@ -38,8 +38,16 @@ describe('createAuthConfig', () => {
 
   it('uses secure cookies in production', () => {
     expect(
-      createAuthConfig({ ...validEnvironment, NODE_ENV: 'production' })
-        .cookieSecure,
+      createAuthConfig({
+        ...validEnvironment,
+        APP_ORIGIN: 'https://lili.example.com',
+        NODE_ENV: 'production',
+      }).cookieSecure,
     ).toBe(true);
+  });
+  it('rejects HTTP origins in production', () => {
+    expect(() =>
+      createAuthConfig({ ...validEnvironment, NODE_ENV: 'production' }),
+    ).toThrow('APP_ORIGIN must use HTTPS in production.');
   });
 });

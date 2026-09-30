@@ -4,12 +4,12 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 
-import { GoogleOidcClient } from '#src/auth/client-integrations/google-oidc/clients/google-oidc.client.js';
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
-import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
-import type { AuthenticatedExternalIdentity } from '#src/auth/identities/types/authenticated-external-identity.type.js';
-import { OidcLoginException } from '#src/auth/oidc-login-attempts/exceptions/oidc-login.exception.js';
+import { OidcLoginException } from '#src/auth/google-login/attempts/exceptions/oidc-login.exception.js';
+import { GoogleOidcClient } from '#src/auth/google-login/oidc/clients/google-oidc.client.js';
+import type { AuthenticatedExternalIdentity } from '#src/auth/google-login/oidc/types/authenticated-external-identity.type.js';
+import type { AuthConfig } from '#src/auth/types/auth-config.type.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import { PrismaService } from '#src/database/prisma.service.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 

@@ -1,4 +1,4 @@
-import type { AuthenticatedExternalIdentity } from '#src/auth/identities/types/authenticated-external-identity.type.js';
+import type { AuthenticatedExternalIdentity } from '#src/auth/google-login/oidc/types/authenticated-external-identity.type.js';
 
 export abstract class GoogleOidcClient {
   abstract createAuthorizationUrl(data: {

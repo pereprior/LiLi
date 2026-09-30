@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { AuthEnvironmentValueUtils } from '#src/auth/config/utils/auth-environment-value.utils.js';
+import { AuthEnvironmentValueUtils } from '#src/auth/utils/auth-environment-value/auth-environment-value.utils.js';
 
 describe('AuthEnvironmentValueUtils', () => {
   describe('requireValue', () => {

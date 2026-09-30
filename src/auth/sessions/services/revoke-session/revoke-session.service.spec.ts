@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
 import { RevokeSessionService } from '#src/auth/sessions/services/revoke-session/revoke-session.service.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import type { PrismaService } from '#src/database/prisma.service.js';
 
 const now = new Date('2026-09-24T12:00:00.000Z');

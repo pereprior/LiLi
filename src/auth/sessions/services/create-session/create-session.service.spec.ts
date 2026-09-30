@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
 import { SessionUserUnavailableException } from '#src/auth/sessions/exceptions/session-user-unavailable.exception.js';
 import { CreateSessionService } from '#src/auth/sessions/services/create-session/create-session.service.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import type { PrismaService } from '#src/database/prisma.service.js';
 
 const now = new Date('2026-09-24T12:00:00.000Z');

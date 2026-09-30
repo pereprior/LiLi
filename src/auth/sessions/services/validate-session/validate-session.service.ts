@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
 import { authConfig } from '#src/auth/config/auth.config.js';
-import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
+import type { AuthConfig } from '#src/auth/types/auth-config.type.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import { PrismaService } from '#src/database/prisma.service.js';
 import { AppLogger } from '#src/logging/app-logger.js';
 

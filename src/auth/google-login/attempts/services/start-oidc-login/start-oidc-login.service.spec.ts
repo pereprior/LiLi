@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { GoogleOidcClient } from '#src/auth/client-integrations/google-oidc/clients/google-oidc.client.js';
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
-import { StartOidcLoginService } from '#src/auth/oidc-login-attempts/services/start-oidc-login/start-oidc-login.service.js';
+import { StartOidcLoginService } from '#src/auth/google-login/attempts/services/start-oidc-login/start-oidc-login.service.js';
+import type { GoogleOidcClient } from '#src/auth/google-login/oidc/clients/google-oidc.client.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 import type { PrismaService } from '#src/database/prisma.service.js';
 
 const now = new Date('2026-09-26T12:00:00.000Z');

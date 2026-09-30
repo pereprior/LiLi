@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
-import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
-import { AuthEnvironmentValueUtils } from '#src/auth/config/utils/auth-environment-value.utils.js';
+import type { AuthConfig } from '#src/auth/types/auth-config.type.js';
+import { AuthEnvironmentValueUtils } from '#src/auth/utils/auth-environment-value/auth-environment-value.utils.js';
 
 export const AUTH_CONFIG_KEY = 'auth';
 const GOOGLE_CALLBACK_PATH = '/auth/google/callback';
@@ -13,6 +13,14 @@ export function createAuthConfig(
     environment.APP_ORIGIN,
     'APP_ORIGIN',
   );
+
+  if (
+    environment.NODE_ENV === 'production' &&
+    appOrigin.protocol !== 'https:'
+  ) {
+    throw new Error('APP_ORIGIN must use HTTPS in production.');
+  }
+
   const redirectUri = new URL(GOOGLE_CALLBACK_PATH, appOrigin);
   const allowedEmails = AuthEnvironmentValueUtils.parseEmailList(
     environment.AUTH_GOOGLE_ALLOWED_EMAILS,

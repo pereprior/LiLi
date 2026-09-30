@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
 
-import { AuthSecretsUtils } from '#src/auth/common/utils/auth-secrets.utils.js';
+import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
 
 describe('AuthSecretsUtils', () => {
   it('generates independent 256-bit base64url secrets', () => {

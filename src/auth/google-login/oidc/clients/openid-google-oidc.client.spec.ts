@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { OpenidGoogleOidcClient } from '#src/auth/client-integrations/google-oidc/clients/openid-google-oidc.client.js';
-import type { AuthConfig } from '#src/auth/config/types/auth-config.type.js';
-import { OidcLoginException } from '#src/auth/oidc-login-attempts/exceptions/oidc-login.exception.js';
+import { OidcLoginException } from '#src/auth/google-login/attempts/exceptions/oidc-login.exception.js';
+import { OpenidGoogleOidcClient } from '#src/auth/google-login/oidc/clients/openid-google-oidc.client.js';
+import type { AuthConfig } from '#src/auth/types/auth-config.type.js';
 
 const oidc = vi.hoisted(() => ({
   discovery: vi.fn(),
