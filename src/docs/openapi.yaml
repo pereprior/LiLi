@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: LiLi · API
-  version: 0.1.1
+  version: 0.2.0
   description: |
     Referencia del contrato HTTP actual de LiLi, pensada para volver al proyecto
     después de un tiempo y entender sus decisiones sin empezar por el código.
