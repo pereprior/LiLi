@@ -1,0 +1,18 @@
+get:
+  tags: [Autenticación]
+  operationId: getAuthenticatedUser
+  summary: Consultar el usuario de la sesión actual
+  description: |
+    Valida la cookie de sesión local y devuelve el identificador y el correo
+    del usuario asociado. La respuesta no se almacena en caché.
+  security:
+    - sessionCookie: []
+  responses:
+    '200':
+      description: Usuario de la sesión actual.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/auth-me-response.yaml
+    '401':
+      description: Falta la cookie o la sesión ha caducado o se ha revocado.

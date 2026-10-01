@@ -6,8 +6,7 @@
   "license": "UNLICENSED",
   "type": "module",
   "imports": {
-    "#src/*": "./dist/*",
-    "#test-factories/*": "./dist/test-factories/*"
+    "#src/*": "./dist/*"
   },
   "engines": {
     "node": ">=24.0.0"
@@ -18,15 +17,14 @@
     "start": "node --enable-source-maps --env-file-if-exists=.env dist/main.js",
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "test": "vitest run",
-    "test:e2e": "pnpm db:e2e:up && pnpm db:e2e:migrate && pnpm run test:e2e:run",
-    "test:e2e:run": "vitest run --config vitest.config.e2e.ts",
-    "test:watch": "vitest",
+    "test": "pnpm db:e2e:up && pnpm db:e2e:migrate && vitest run",
+    "test:coverage": "pnpm db:e2e:up && pnpm db:e2e:migrate && vitest run --coverage",
+    "test:watch": "pnpm db:e2e:up && pnpm db:e2e:migrate && vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "ci": "pnpm typecheck && pnpm lint && pnpm build && pnpm test && pnpm test:e2e && pnpm format:check",
+    "ci": "pnpm typecheck && pnpm lint && pnpm build && pnpm test:coverage && pnpm format:check",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:migrate": "prisma migrate dev",
@@ -37,23 +35,27 @@
     "db:e2e:migrate": "NODE_ENV=test prisma migrate deploy"
   },
   "dependencies": {
-    "@nestjs/common": "12.0.1",
+    "@apidevtools/swagger-parser": "^13.1.0",
+    "@nestjs/common": "12.1.0",
     "@nestjs/config": "^12.0.0",
-    "@nestjs/core": "12.0.1",
-    "@nestjs/platform-express": "12.0.1",
+    "@nestjs/core": "12.1.0",
+    "@nestjs/platform-express": "12.1.0",
+    "@nestjs/swagger": "12.0.2",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
+    "openid-client": "6.8.8",
     "pg": "^8.23.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "12.0.0",
-    "@nestjs/testing": "12.0.1",
+    "@nestjs/testing": "12.1.0",
     "@types/node": "24.13.3",
     "@types/pg": "^8.23.1",
+    "@vitest/coverage-v8": "5.0.0",
     "dotenv": "^17.4.2",
     "dotenv-expand": "^1000.0.0",
     "eslint": "10.10.0",

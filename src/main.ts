@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module.js';
 import { configureApp } from './config/app.config.js';
+import { configureOpenApi } from './config/openapi.config.js';
 
 const DEFAULT_PORT = 3000;
 
@@ -11,6 +12,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   configureApp(app);
+  await configureOpenApi(app);
 
   const port = Number(process.env.PORT ?? DEFAULT_PORT);
   await app.listen(port);

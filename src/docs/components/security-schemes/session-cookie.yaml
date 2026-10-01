@@ -1,0 +1,7 @@
+type: apiKey
+in: cookie
+name: lili_session
+description: |
+  Sesión local creada después del callback de Google. En desarrollo la cookie
+  se llama `lili_session`; en producción se llama `__Host-lili_session` y es
+  Secure. Solo se envía al servidor y no puede leerse desde JavaScript.

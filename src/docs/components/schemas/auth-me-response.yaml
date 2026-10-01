@@ -1,0 +1,12 @@
+type: object
+required:
+  - uuid
+  - email
+properties:
+  uuid:
+    type: string
+    description: Identificador estable del usuario local.
+  email:
+    type: string
+    format: email
+    description: Correo de la cuenta de Google autorizada.

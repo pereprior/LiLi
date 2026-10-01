@@ -1,0 +1,55 @@
+get:
+  tags: [Autenticación]
+  operationId: completeGoogleLogin
+  summary: Completar el inicio de sesión con Google
+  description: |
+    Google devuelve aquí al navegador. LiLi comprueba que `state` coincide con
+    la cookie temporal y con un intento vigente y de un solo uso; después
+    intercambia `code` con Google. Solo acepta cuentas con correo verificado e
+    incluido en `AUTH_GOOGLE_ALLOWED_EMAILS`.
+
+    Si el acceso es válido, crea o actualiza el usuario local, abre una sesión
+    de 7 días y redirige a `/auth/me`. La cookie temporal se borra antes de
+    procesar el callback, también cuando este acaba en error.
+  parameters:
+    - in: query
+      name: state
+      required: true
+      description: Estado devuelto por Google; debe coincidir con la cookie temporal.
+      schema:
+        type: string
+    - in: query
+      name: code
+      required: true
+      description: Código de autorización que LiLi intercambia con Google.
+      schema:
+        type: string
+    - in: cookie
+      name: lili_oidc_state
+      required: true
+      description: |
+        Estado guardado al empezar el acceso. En producción el nombre es
+        `__Host-lili_oidc_state`.
+      schema:
+        type: string
+  responses:
+    '302':
+      description: Cuenta permitida y sesión local creada.
+      headers:
+        Location:
+          description: URL de `/auth/me` en el origen configurado.
+          schema:
+            type: string
+            format: uri
+        Set-Cookie:
+          description: Borra el estado temporal y establece la cookie de sesión.
+          schema:
+            type: string
+    '400':
+      description: |
+        El estado no coincide, está caducado o ya se usó; también se devuelve
+        si la respuesta de Google no es válida.
+    '403':
+      description: La cuenta no tiene un correo verificado o no está permitida.
+    '503':
+      description: No se pudo consumir el intento de acceso guardado.

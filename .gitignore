@@ -1,8 +1,8 @@
 node_modules/
 dist/
+coverage/
 build/
 .env
-.env.test
 *.log
 .idea/
 .vscode/

@@ -1,0 +1,12 @@
+model OidcLoginAttempt {
+  uuid         String @id @default(uuid())
+  stateHash    String @unique
+  nonce        String
+  codeVerifier String
+
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  consumedAt DateTime?
+
+  @@index([expiresAt])
+}
