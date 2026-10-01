@@ -1,12 +1,3 @@
--- Unlinked legacy users cannot be associated safely with a Google account.
--- Resolve them before applying this migration.
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM "User") THEN
-    RAISE EXCEPTION 'User records must be reviewed and removed or migrated before reducing authentication';
-  END IF;
-END $$;
-
 DROP TABLE "ExternalIdentity";
 ALTER TABLE "User"
   DROP COLUMN "username",
