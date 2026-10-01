@@ -35,10 +35,12 @@
     "db:e2e:migrate": "NODE_ENV=test prisma migrate deploy"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
     "@nestjs/common": "12.1.0",
     "@nestjs/config": "^12.0.0",
     "@nestjs/core": "12.1.0",
     "@nestjs/platform-express": "12.1.0",
+    "@nestjs/swagger": "12.0.2",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "class-transformer": "^0.5.1",

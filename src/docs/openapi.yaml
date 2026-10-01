@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: LiLi · API
+  version: 0.1.1
+  description: |
+    Referencia del contrato HTTP actual de LiLi, pensada para volver al proyecto
+    después de un tiempo y entender sus decisiones sin empezar por el código.
+
+    El acceso empieza en `GET /auth/google`: el navegador pasa por Google y
+    vuelve a `/auth/google/callback`. Si la identidad está permitida, LiLi crea
+    una sesión local en una cookie HttpOnly. Las rutas privadas validan esa
+    cookie. Las peticiones que modifican estado también deben proceder del
+    origen configurado en `APP_ORIGIN`.
+
+    En esta etapa solo está implementada la autenticación. Tareas y
+    recordatorios forman parte del objetivo de la versión 0.2.
+tags:
+  - name: Autenticación
+    description: Inicio de sesión con Google y sesión local de LiLi.
+paths:
+  /auth/google:
+    $ref: ./paths/auth/google.yaml
+  /auth/google/callback:
+    $ref: ./paths/auth/google-callback.yaml
+  /auth/me:
+    $ref: ./paths/auth/me.yaml
+  /auth/logout:
+    $ref: ./paths/auth/logout.yaml
+components:
+  schemas:
+    AuthMeResponse:
+      $ref: ./components/schemas/auth-me-response.yaml
+  securitySchemes:
+    sessionCookie:
+      $ref: ./components/security-schemes/session-cookie.yaml

@@ -1,0 +1,24 @@
+get:
+  tags: [Autenticación]
+  operationId: startGoogleLogin
+  summary: Empezar el inicio de sesión con Google
+  description: |
+    Crea un intento de acceso válido durante 10 minutos y redirige el navegador
+    a Google. Guarda un valor de estado en una cookie temporal HttpOnly para
+    vincular el callback con el mismo navegador. Esta ruta inicia un flujo de
+    navegador: no devuelve JSON ni crea todavía una sesión de LiLi.
+  responses:
+    '302':
+      description: Redirección a la página de autorización de Google.
+      headers:
+        Location:
+          description: URL de Google que incluye el estado del intento.
+          schema:
+            type: string
+            format: uri
+        Set-Cookie:
+          description: Cookie temporal `lili_oidc_state` con el estado del intento.
+          schema:
+            type: string
+    '503':
+      description: No se pudo crear el intento o contactar con Google.

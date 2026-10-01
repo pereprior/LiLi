@@ -1,0 +1,36 @@
+post:
+  tags: [Autenticación]
+  operationId: logout
+  summary: Cerrar la sesión actual
+  description: |
+    Revoca la sesión local y borra su cookie. Exige una sesión válida y una
+    cabecera `Origin` igual a `APP_ORIGIN`; si falta `Origin`, acepta un
+    `Referer` del mismo origen. Sin ambas condiciones, la sesión sigue activa.
+    Tras un 204, la cookie anterior ya no da acceso a rutas privadas.
+  security:
+    - sessionCookie: []
+  parameters:
+    - in: header
+      name: Origin
+      required: false
+      description: Debe coincidir con `APP_ORIGIN` si está presente.
+      schema:
+        type: string
+    - in: header
+      name: Referer
+      required: false
+      description: Se usa solo cuando falta `Origin`; su origen debe ser `APP_ORIGIN`.
+      schema:
+        type: string
+  responses:
+    '204':
+      description: Sesión revocada y cookie borrada; no hay cuerpo de respuesta.
+      headers:
+        Set-Cookie:
+          description: Borra la cookie de sesión del navegador.
+          schema:
+            type: string
+    '401':
+      description: Falta la cookie o la sesión ya no es válida.
+    '403':
+      description: '`Origin` o `Referer` no coincide con `APP_ORIGIN`.'

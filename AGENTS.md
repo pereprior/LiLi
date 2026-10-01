@@ -34,6 +34,30 @@ NestJS 12 on Node.js 24 or newer and is managed with pnpm.
 - Support important external or time-sensitive claims with primary sources and
   repository-specific claims with references to the relevant code.
 
+## Documentation Audiences
+
+- Write the README as the entry point for someone who knows nothing about LiLi.
+  Explain what the project is, why it exists, what has actually been built, and
+  how to explore it. Make it engaging through clarity and honest technical
+  choices, not a sales pitch: LiLi is primarily for its creator's own use.
+
+- Write the README in a natural, approachable voice. It should give an outside
+  reader a good impression of the developer's thinking and work without sounding
+  promotional or like a template.
+
+- Treat OpenAPI as developer documentation for the project's future maintainers,
+  including the creator and AI assistants. Describe what each operation does,
+  its place in the relevant flow, authentication and input requirements, response
+  and error behavior, and any non-obvious effects. Endpoint names and schemas
+  alone are not enough to explain the API.
+
+- Keep the OpenAPI source in separate YAML files under `src/docs/`, with
+  references between them. Do not put OpenAPI decorators or descriptions in
+  controllers, services, or response classes.
+
+- Keep documentation accurate to the implemented behavior and write it for
+  humans: specific, clear, and easy to understand without prior project context.
+
 ## Approval and Execution Boundaries
 
 - When the user gives a concrete task, carry out the ordinary, in-scope steps
@@ -208,7 +232,7 @@ Maintain two primary test levels:
 - Run tests in watch mode: `pnpm test:watch`
 - Build: `pnpm build`
 - Check formatting: `pnpm format:check`
-- Run the complete local verification suite: `pnpm ci`
+- Run the complete local verification suite: `pnpm run ci`
 
 Use pnpm and the scripts defined in `package.json`. Do not substitute npm or yarn
 commands.
@@ -226,7 +250,7 @@ After changing code:
 - Run broader tests when the change crosses module boundaries or when narrow
   verification does not provide sufficient confidence.
 
-- Use `pnpm ci` for substantial changes, before considering a broad task
+- Use `pnpm run ci` for substantial changes, before considering a broad task
   complete, or when explicitly requested.
 
 - Do not fix unrelated verification failures as part of the current task.
