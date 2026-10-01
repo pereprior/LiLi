@@ -1,3 +1,4 @@
+import { ServiceUnavailableException } from '@nestjs/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OidcLoginException } from '#src/auth/google-login/attempts/exceptions/oidc-login.exception.js';
@@ -77,6 +78,15 @@ describe('CompleteOidcLoginService', () => {
     updateMany.mockResolvedValue({ count: 0 });
     await expect(service.execute(callbackUrl, 'state')).rejects.toBeInstanceOf(
       OidcLoginException,
+    );
+    expect(exchangeCode).not.toHaveBeenCalled();
+  });
+
+  it('hides database failures while consuming an attempt', async () => {
+    updateMany.mockRejectedValue(new Error('secret detail'));
+
+    await expect(service.execute(callbackUrl, 'state')).rejects.toBeInstanceOf(
+      ServiceUnavailableException,
     );
     expect(exchangeCode).not.toHaveBeenCalled();
   });

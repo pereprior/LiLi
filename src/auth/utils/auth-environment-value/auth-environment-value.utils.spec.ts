@@ -53,6 +53,12 @@ describe('AuthEnvironmentValueUtils', () => {
       ).toEqual(new Set(['member@example.com']));
     });
 
+    it('returns an empty set when no email list is provided', () => {
+      expect(
+        AuthEnvironmentValueUtils.parseEmailList(undefined, 'EMAILS'),
+      ).toEqual(new Set());
+    });
+
     it('rejects an invalid email', () => {
       expect(() =>
         AuthEnvironmentValueUtils.parseEmailList('not-an-email', 'EMAILS'),

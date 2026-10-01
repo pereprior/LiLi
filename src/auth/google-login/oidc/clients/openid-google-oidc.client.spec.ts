@@ -149,6 +149,30 @@ describe('OpenidGoogleOidcClient', () => {
     ).rejects.toBeInstanceOf(OidcLoginException);
   });
 
+  it('retries discovery after a failure', async () => {
+    oidc.discovery
+      .mockRejectedValueOnce(new Error('Provider unavailable'))
+      .mockResolvedValueOnce({});
+    oidc.calculatePKCECodeChallenge.mockResolvedValue('challenge');
+    oidc.buildAuthorizationUrl.mockReturnValue(
+      new URL('https://accounts.google.com/o/oauth2/v2/auth'),
+    );
+    const client = new OpenidGoogleOidcClient(config);
+    const request = {
+      state: 'state',
+      nonce: 'nonce',
+      codeVerifier: 'verifier',
+    };
+
+    await expect(client.createAuthorizationUrl(request)).rejects.toThrow(
+      'Provider unavailable',
+    );
+    await expect(
+      client.createAuthorizationUrl(request),
+    ).resolves.toBeInstanceOf(URL);
+    expect(oidc.discovery).toHaveBeenCalledTimes(2);
+  });
+
   it('passes a nonce validation failure through to the caller', async () => {
     oidc.discovery.mockResolvedValue({
       serverMetadata: (): { issuer: string } => ({

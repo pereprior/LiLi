@@ -63,6 +63,15 @@ describe('SignInWithGoogleService', () => {
     expect(createSession).not.toHaveBeenCalled();
   });
 
+  it('propagates unexpected database failures', async () => {
+    const failure = new Error('Database unavailable');
+    upsert.mockRejectedValue(failure);
+
+    await expect(service.execute(identity)).rejects.toBe(failure);
+    expect(update).not.toHaveBeenCalled();
+    expect(createSession).not.toHaveBeenCalled();
+  });
+
   it('resolves a concurrent unique-subject creation', async () => {
     upsert.mockRejectedValue(
       new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
