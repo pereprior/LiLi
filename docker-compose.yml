@@ -1,3 +1,5 @@
+name: lili
+
 services:
   postgres:
     image: postgres:17

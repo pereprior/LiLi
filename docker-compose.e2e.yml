@@ -1,3 +1,5 @@
+name: lili
+
 services:
   postgres-e2e:
     image: postgres:17

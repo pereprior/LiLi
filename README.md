@@ -1,44 +1,44 @@
-# LiLi
+# LiLi API
 
-LiLi es el asistente doméstico que estoy construyendo para mi propia casa. Quiero llevar mis tareas y recordatorios en una instalación que controlo, sin dejar esos datos en un servicio de terceros. Lo alojo yo y lo estoy diseñando para que, con el tiempo, pueda hablar con él desde una web, el móvil o una interfaz de voz.
+LiLi is a home assistant I’m building for my own home. I want to manage my tasks and reminders on a system I control, without storing that data with a third-party service. I host it myself and am designing it so that, over time, I can interact with it through the web, a mobile app, or voice.
 
-Este repositorio muestra el camino hasta allí, no un producto terminado. La versión 0.2 tiene como objetivo la gestión de tareas y recordatorios. **Hoy está implementada la base de autenticación**, con acceso mediante Google para una lista cerrada de correos y sesiones locales guardadas en PostgreSQL. Todavía no hay endpoints de tareas ni de recordatorios.
+This repository contains LiLi’s backend and API. The web interface will be developed as a separate project. This is a work in progress, not a finished product. Version 0.2 aims to support tasks and reminders. **The authentication foundation is in place today**, with Google sign-in restricted to an email allowlist and local sessions stored in PostgreSQL. There are no task or reminder endpoints yet.
 
-## Cómo está pensado
+## How it’s designed
 
-LiLi es una aplicación modular en TypeScript y NestJS. Cada interfaz futura debería llamar a las mismas acciones del núcleo, para que las reglas de las tareas no dependan de si una petición llega por HTTP, voz o una automatización. Por ahora, el trabajo visible en la API es el flujo de acceso: Google confirma la identidad; LiLi decide si la cuenta está permitida y mantiene su propia sesión.
+LiLi is a modular application built with TypeScript and NestJS. Each future interface should invoke the same core actions, so task rules do not depend on whether a request comes through HTTP, voice, or an automation. For now, the API’s implemented functionality centers on sign-in: Google verifies the user’s identity; LiLi decides whether the account is allowed and manages its own session.
 
-La intención es mantener una arquitectura que pueda crecer sin convertir un asistente personal en una colección de servicios innecesarios. Las decisiones y el código actuales importan más que las posibilidades futuras.
+The aim is to keep an architecture that can grow without turning a personal assistant into an unnecessary collection of services. The current code and design decisions matter more than hypothetical future capabilities.
 
-## Ponerlo en marcha
+## Getting started
 
-Necesitas Node.js 24 o posterior, pnpm, Docker con Compose y unas credenciales OAuth de Google. Configura en Google la URI de redirección `http://localhost:3000/auth/google/callback` para el entorno local.
+You’ll need Node.js 24 or later, pnpm, Docker with Compose, and Google OAuth credentials. Register `http://localhost:3000/auth/google/callback` as a redirect URI in Google for local development.
 
-1. Instala las dependencias con `pnpm install --frozen-lockfile`.
-2. Crea un archivo `.env` en la raíz. La aplicación y Docker Compose usan estas variables:
+1. Install dependencies with `pnpm install --frozen-lockfile`.
+2. Create a `.env` file in the repository root. The application and Docker Compose use these variables:
 
    ```dotenv
    NODE_ENV=development
    APP_ORIGIN=http://localhost:3000
-   AUTH_GOOGLE_CLIENT_ID=<id-de-cliente>
-   AUTH_GOOGLE_CLIENT_SECRET=<secreto-de-cliente>
-   AUTH_GOOGLE_ALLOWED_EMAILS=tu-correo@example.com
+   AUTH_GOOGLE_CLIENT_ID=<client-id>
+   AUTH_GOOGLE_CLIENT_SECRET=<client-secret>
+   AUTH_GOOGLE_ALLOWED_EMAILS=your-email@example.com
    POSTGRES_DB=lili
    POSTGRES_USER=lili
-   POSTGRES_PASSWORD=<contraseña-local>
+   POSTGRES_PASSWORD=<local-password>
    POSTGRES_PORT=5432
-   DATABASE_URL=postgresql://lili:<contraseña-local>@localhost:5432/lili
+   DATABASE_URL=postgresql://lili:<local-password>@localhost:5432/lili
    ```
 
-   El correo debe ser el de la cuenta de Google con la que vas a entrar. Si cambias `APP_ORIGIN`, registra en Google la nueva URI de callback con la ruta `/auth/google/callback`. No subas `.env` al repositorio.
+   Use the email address of the Google account you’ll sign in with. If you change `APP_ORIGIN`, register the new callback URI in Google, keeping the `/auth/google/callback` path. Do not commit `.env` to the repository.
 
-3. Inicia PostgreSQL con `pnpm db:up`. Aplica las migraciones con `pnpm db:migrate:deploy` y genera el cliente de Prisma con `pnpm exec prisma generate`.
-4. Arranca la aplicación con `pnpm dev` y abre `http://localhost:3000/auth/google` para iniciar sesión.
+3. Start PostgreSQL with `pnpm db:up`. Apply migrations with `pnpm db:migrate:deploy` and generate the Prisma client with `pnpm exec prisma generate`.
+4. Start the application with `pnpm dev` and open `http://localhost:3000/auth/google` to sign in.
 
-## Explorar la API
+## Exploring the API
 
-En desarrollo, `http://localhost:3000/api` abre la documentación OpenAPI. También puedes consultar su definición JSON en `http://localhost:3000/api-json`. La fuente está en [`src/docs/openapi.yaml`](src/docs/openapi.yaml), con cada ruta y esquema en su propio archivo YAML. Está escrita para volver al proyecto más adelante y entender qué hace cada operación, cómo se encadena el acceso con Google y qué papel tienen las cookies, las respuestas y los errores. La documentación interactiva no se sirve en producción. Los YAML se validan al arrancar la documentación en desarrollo.
+In development, `http://localhost:3000/api` opens the OpenAPI documentation. Its JSON definition is also available at `http://localhost:3000/api-json`. The source lives in [`src/docs/openapi.yaml`](src/docs/openapi.yaml), with each path and schema in its own YAML file. The documentation is written to make it easy to return to the project later and understand what each operation does, how the Google sign-in flow fits together, and how cookies, responses, and errors work. The interactive documentation is not served in production. The YAML files are validated when the documentation is initialized in development.
 
-El punto de partida es `GET /auth/google`. Después de volver de Google, `GET /auth/me` devuelve el usuario de la sesión y `POST /auth/logout` la cierra. Este último exige que `Origin` o `Referer` coincida con `APP_ORIGIN`.
+Start with `GET /auth/google`. After returning from Google, `GET /auth/me` returns the current session’s user, and `POST /auth/logout` ends the session. Logout requires `Origin` or `Referer` to match `APP_ORIGIN`.
 
-Para comprobar el proyecto localmente, usa `pnpm run ci`. La suite de pruebas necesita Docker para levantar su base de datos aislada.
+To run the local verification suite, use `pnpm run ci`. The test suite needs Docker to start its isolated database.
