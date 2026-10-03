@@ -39,12 +39,14 @@ export default defineConfig({
       {
         test: {
           name: 'unit',
+          setupFiles: ['./test/setup.ts'],
           include: ['src/**/*.spec.ts'],
         },
       },
       {
         test: {
           name: 'e2e',
+          setupFiles: ['./test/setup.ts'],
           env: testEnvironment,
           fileParallelism: false,
           include: ['test/**/*.e2e-spec.ts'],

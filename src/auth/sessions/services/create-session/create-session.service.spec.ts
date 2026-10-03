@@ -1,58 +1,140 @@
-import { Prisma } from '@prisma/client';
+import { Test, type TestingModule } from '@nestjs/testing';
+import { Prisma, type Session } from '@prisma/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SessionException } from '#src/auth/sessions/exceptions/session.exception.js';
 import { SessionUserUnavailableException } from '#src/auth/sessions/exceptions/session-user-unavailable.exception.js';
 import { CreateSessionService } from '#src/auth/sessions/services/create-session/create-session.service.js';
 import { AuthSecretsUtils } from '#src/auth/utils/auth-secrets/auth-secrets.utils.js';
-import type { PrismaService } from '#src/database/prisma.service.js';
-
-const now = new Date('2026-09-24T12:00:00.000Z');
+import { PrismaService } from '#src/database/prisma.service.js';
 
 describe('CreateSessionService', () => {
-  const create = vi.fn();
-  const prisma = { session: { create } } as unknown as PrismaService;
-  const service = new CreateSessionService(prisma);
+  let module: TestingModule;
+  let service: CreateSessionService;
+  const create = vi.fn<(args: Prisma.SessionCreateArgs) => Promise<Session>>();
 
-  beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(now);
+  beforeEach(async () => {
     create.mockReset();
+
+    module = await Test.createTestingModule({
+      providers: [
+        CreateSessionService,
+        { provide: PrismaService, useValue: { session: { create } } },
+      ],
+    }).compile();
+
+    service = module.get(CreateSessionService);
   });
 
-  afterEach(() => vi.useRealTimers());
+  afterEach(async () => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    await module.close();
+  });
 
-  it('stores only the token hash and returns a seven-day session', async () => {
-    const created = await service.execute('user-1');
+  describe('Session creation', () => {
+    it('stores the token hash and connects the requested user with a seven-day expiration', async () => {
+      const now = new Date('2026-09-24T12:00:00.000Z');
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+      create.mockResolvedValue({
+        uuid: 'session-1',
+        tokenHash: 'stored-hash',
+        userUuid: 'user-1',
+        createdAt: new Date('2026-09-24T12:00:00.000Z'),
+        expiresAt: new Date('2026-10-01T12:00:00.000Z'),
+        revokedAt: null,
+      });
 
-    expect(create).toHaveBeenCalledWith({
-      data: {
-        tokenHash: AuthSecretsUtils.hash(created.token),
-        expiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
-        user: { connect: { uuid: 'user-1' } },
-      },
+      const created = await service.execute('user-1');
+
+      expect(create).toHaveBeenCalledExactlyOnceWith({
+        data: {
+          tokenHash: AuthSecretsUtils.hash(created.token),
+          expiresAt: new Date('2026-10-01T12:00:00.000Z'),
+          user: { connect: { uuid: 'user-1' } },
+        },
+      });
     });
-    expect(created.expiresAt).toEqual(
-      new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
-    );
+
+    it('returns the generated token and its seven-day expiration', async () => {
+      const now = new Date('2026-09-24T12:00:00.000Z');
+      vi.useFakeTimers();
+      vi.setSystemTime(now);
+      create.mockResolvedValue({
+        uuid: 'session-1',
+        tokenHash: 'stored-hash',
+        userUuid: 'user-1',
+        createdAt: new Date('2026-09-24T12:00:00.000Z'),
+        expiresAt: new Date('2026-10-01T12:00:00.000Z'),
+        revokedAt: null,
+      });
+      vi.spyOn(AuthSecretsUtils, 'generate').mockReturnValue('session-token');
+
+      const created = await service.execute('user-1');
+
+      expect(created).toEqual({
+        token: 'session-token',
+        expiresAt: new Date('2026-10-01T12:00:00.000Z'),
+      });
+    });
+
+    it('waits for persistence before returning the created session', async () => {
+      const persistedSession: Session = {
+        uuid: 'session-1',
+        tokenHash: 'stored-hash',
+        userUuid: 'user-1',
+        createdAt: new Date('2026-09-24T12:00:00.000Z'),
+        expiresAt: new Date('2026-10-01T12:00:00.000Z'),
+        revokedAt: null,
+      };
+      const persistence = Promise.withResolvers<Session>();
+      create.mockImplementation(() => persistence.promise);
+      let completed = false;
+
+      const result = service.execute('user-1').then((session) => {
+        completed = true;
+        return session;
+      });
+      await Promise.resolve();
+
+      expect(completed).toBe(false);
+
+      persistence.resolve(persistedSession);
+      await result;
+
+      expect(completed).toBe(true);
+    });
   });
 
-  it('rejects a missing user', async () => {
-    create.mockRejectedValue(
-      new Prisma.PrismaClientKnownRequestError('Record not found.', {
-        code: 'P2025',
-        clientVersion: '7.10.0',
-      }),
-    );
-    await expect(service.execute('missing')).rejects.toBeInstanceOf(
-      SessionUserUnavailableException,
-    );
-  });
+  describe('Creation failures', () => {
+    it('reports an unavailable user when persistence raises P2025', async () => {
+      create.mockRejectedValue(
+        new Prisma.PrismaClientKnownRequestError('Record not found.', {
+          code: 'P2025',
+          clientVersion: '7.10.0',
+        }),
+      );
 
-  it('hides unexpected database failures', async () => {
-    create.mockRejectedValue(new Error('secret detail'));
-    await expect(service.execute('user-1')).rejects.toBeInstanceOf(
-      SessionException,
-    );
+      const result = service.execute('missing');
+
+      await expect(result).rejects.toBeInstanceOf(
+        SessionUserUnavailableException,
+      );
+      await expect(result).rejects.toMatchObject({
+        message: 'Cannot create a session for this user.',
+      });
+    });
+
+    it('replaces unexpected database failures with the public session error', async () => {
+      create.mockRejectedValue(new Error('secret database detail'));
+
+      const result = service.execute('user-1');
+
+      await expect(result).rejects.toBeInstanceOf(SessionException);
+      await expect(result).rejects.toMatchObject({
+        message: 'An unexpected error occurred while processing the session.',
+      });
+    });
   });
 });

@@ -5,64 +5,77 @@ import { AuthEnvironmentValueUtils } from '#src/auth/utils/auth-environment-valu
 describe('AuthEnvironmentValueUtils', () => {
   describe('requireValue', () => {
     it('returns a trimmed required value', () => {
-      expect(AuthEnvironmentValueUtils.requireValue(' value ', 'VALUE')).toBe(
-        'value',
-      );
+      const result = AuthEnvironmentValueUtils.requireValue(' value ', 'VALUE');
+
+      expect(result).toBe('value');
     });
 
-    it.each([undefined, '', '   '])(
-      'rejects an empty required value',
-      (value) => {
-        expect(() =>
-          AuthEnvironmentValueUtils.requireValue(value, 'VALUE'),
-        ).toThrow('VALUE is required.');
-      },
-    );
+    it.each([
+      { reason: 'missing', value: undefined },
+      { reason: 'empty', value: '' },
+      { reason: 'whitespace-only', value: '   ' },
+    ])('rejects a $reason required value', ({ value }) => {
+      expect(() =>
+        AuthEnvironmentValueUtils.requireValue(value, 'VALUE'),
+      ).toThrow(new Error('VALUE is required.'));
+    });
   });
 
   describe('parseUrl', () => {
-    it('parses a valid URL', () => {
-      expect(
-        AuthEnvironmentValueUtils.parseUrl(
-          'https://lili.example.com/path',
-          'URL',
-        ),
-      ).toBeInstanceOf(URL);
-    });
+    it.each(['http://lili.example.com/path', 'https://lili.example.com/path'])(
+      'parses %s without changing its content',
+      (value) => {
+        const result = AuthEnvironmentValueUtils.parseUrl(value, 'URL');
 
-    it('rejects an invalid URL', () => {
-      expect(() =>
-        AuthEnvironmentValueUtils.parseUrl('not-a-url', 'URL'),
-      ).toThrow('URL must be a valid HTTP(S) URL.');
-    });
+        expect(result).toEqual(new URL(value));
+      },
+    );
 
-    it('rejects a non-HTTP URL', () => {
-      expect(() =>
-        AuthEnvironmentValueUtils.parseUrl('ftp://lili.example.com', 'URL'),
-      ).toThrow('URL must be a valid HTTP(S) URL.');
+    it.each([
+      { reason: 'invalid URL', value: 'not-a-url' },
+      { reason: 'non-HTTP URL', value: 'ftp://lili.example.com' },
+    ])('rejects an $reason', ({ value }) => {
+      expect(() => AuthEnvironmentValueUtils.parseUrl(value, 'URL')).toThrow(
+        new Error('URL must be a valid HTTP(S) URL.'),
+      );
     });
   });
 
   describe('parseEmailList', () => {
-    it('normalizes and de-duplicates emails', () => {
-      expect(
-        AuthEnvironmentValueUtils.parseEmailList(
-          ' MEMBER@example.com,member@example.com ',
-          'EMAILS',
-        ),
-      ).toEqual(new Set(['member@example.com']));
+    it('trims and lowercases email addresses', () => {
+      const result = AuthEnvironmentValueUtils.parseEmailList(
+        ' MEMBER@example.com, ADMIN@example.com ',
+        'EMAILS',
+      );
+
+      expect(result).toEqual(
+        new Set(['member@example.com', 'admin@example.com']),
+      );
     });
 
-    it('returns an empty set when no email list is provided', () => {
-      expect(
-        AuthEnvironmentValueUtils.parseEmailList(undefined, 'EMAILS'),
-      ).toEqual(new Set());
+    it('removes duplicate normalized addresses', () => {
+      const result = AuthEnvironmentValueUtils.parseEmailList(
+        'MEMBER@example.com,member@example.com',
+        'EMAILS',
+      );
+
+      expect(result).toEqual(new Set(['member@example.com']));
     });
 
-    it('rejects an invalid email', () => {
+    it.each([
+      { reason: 'missing', value: undefined },
+      { reason: 'empty', value: '' },
+      { reason: 'whitespace-only', value: '   ' },
+    ])('returns an empty set for a $reason email list', ({ value }) => {
+      const result = AuthEnvironmentValueUtils.parseEmailList(value, 'EMAILS');
+
+      expect(result).toEqual(new Set());
+    });
+
+    it('rejects an invalid email address', () => {
       expect(() =>
         AuthEnvironmentValueUtils.parseEmailList('not-an-email', 'EMAILS'),
-      ).toThrow('EMAILS contains an invalid email address.');
+      ).toThrow(new Error('EMAILS contains an invalid email address.'));
     });
   });
 });

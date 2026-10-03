@@ -3,41 +3,72 @@ import { describe, expect, it } from 'vitest';
 
 import { PrismaErrorUtils } from '#src/database/utils/prisma-error.utils.js';
 
-function prismaError(code: string): Prisma.PrismaClientKnownRequestError {
-  return new Prisma.PrismaClientKnownRequestError('Database error', {
-    code,
-    clientVersion: '7.10.0',
-  });
-}
-
 describe('PrismaErrorUtils', () => {
-  it('recognizes a unique constraint violation', () => {
-    expect(PrismaErrorUtils.isUniqueConstraintError(prismaError('P2002'))).toBe(
-      true,
-    );
+  describe('isUniqueConstraintError', () => {
+    it('recognizes a Prisma error with code P2002', () => {
+      const error = new Prisma.PrismaClientKnownRequestError('Database error', {
+        code: 'P2002',
+        clientVersion: '7.10.0',
+      });
+
+      const result = PrismaErrorUtils.isUniqueConstraintError(error);
+
+      expect(result).toBe(true);
+    });
+
+    it.each([
+      {
+        reason: 'another Prisma error code',
+        error: new Prisma.PrismaClientKnownRequestError('Database error', {
+          code: 'P2025',
+          clientVersion: '7.10.0',
+        }),
+      },
+      {
+        reason: 'a standard error mentioning the code',
+        error: new Error('P2002'),
+      },
+      { reason: 'an object containing the code', error: { code: 'P2002' } },
+      { reason: 'null', error: null },
+      { reason: 'undefined', error: undefined },
+    ])('returns false for $reason', ({ error }) => {
+      const result = PrismaErrorUtils.isUniqueConstraintError(error);
+
+      expect(result).toBe(false);
+    });
   });
 
-  it('rejects unrelated errors as unique constraint violations', () => {
-    expect(PrismaErrorUtils.isUniqueConstraintError(prismaError('P2025'))).toBe(
-      false,
-    );
-    expect(PrismaErrorUtils.isUniqueConstraintError(new Error('P2002'))).toBe(
-      false,
-    );
-  });
+  describe('isRecordNotFoundError', () => {
+    it('recognizes a Prisma error with code P2025', () => {
+      const error = new Prisma.PrismaClientKnownRequestError('Database error', {
+        code: 'P2025',
+        clientVersion: '7.10.0',
+      });
 
-  it('recognizes a missing database record', () => {
-    expect(PrismaErrorUtils.isRecordNotFoundError(prismaError('P2025'))).toBe(
-      true,
-    );
-  });
+      const result = PrismaErrorUtils.isRecordNotFoundError(error);
 
-  it('rejects unrelated errors as missing records', () => {
-    expect(PrismaErrorUtils.isRecordNotFoundError(prismaError('P2002'))).toBe(
-      false,
-    );
-    expect(PrismaErrorUtils.isRecordNotFoundError(new Error('P2025'))).toBe(
-      false,
-    );
+      expect(result).toBe(true);
+    });
+
+    it.each([
+      {
+        reason: 'another Prisma error code',
+        error: new Prisma.PrismaClientKnownRequestError('Database error', {
+          code: 'P2002',
+          clientVersion: '7.10.0',
+        }),
+      },
+      {
+        reason: 'a standard error mentioning the code',
+        error: new Error('P2025'),
+      },
+      { reason: 'an object containing the code', error: { code: 'P2025' } },
+      { reason: 'null', error: null },
+      { reason: 'undefined', error: undefined },
+    ])('returns false for $reason', ({ error }) => {
+      const result = PrismaErrorUtils.isRecordNotFoundError(error);
+
+      expect(result).toBe(false);
+    });
   });
 });
