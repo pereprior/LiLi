@@ -1,0 +1,4 @@
+interface:
+  display_name: "LiLi Testing"
+  short_description: "Tests unitarios y E2E según los patrones de LiLi"
+  default_prompt: "Usa $lili-testing para crear o revisar tests de LiLi que protejan comportamientos reales y sigan los patrones del proyecto."
