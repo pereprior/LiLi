@@ -1,2 +1,2 @@
 #!/bin/sh
-exec pnpm run format:check
+exec pnpm run pre-commit
